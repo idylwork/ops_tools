@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Start Page</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+      <span class="navbar-brand">C-START</span>
+    </div>
+    <!-- navigation -->
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="nav navbar-nav">
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamB<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="b_pcmut.html">PC Markup</a></li>
+                <li><a href="b_pc2fp.html">FP Convert</a></li>
+                <li><a href="b_project.html">Project Automation</a></li>
+                <li><a href="b_results.html">Game Result</a></li>
+                <li><a href="b_calendar.html">Store Calendar</a></li>
+              </ul>
+            </li>
+
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamA<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="a_pcmut.html">PC Markup</a></li>
+                <li><a href="a_pc2fp.html">FP Convert</a></li>
+                <li class="divider"></li>
+                <li><a href="a_4lbtb.html">Lookback</a></li>
+                <li><a href="a_mmbranch.html">Mail Magazine</a></li>
+              </ul>
+            </li>
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Common<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="c_csvdf.html">CSV Define</a></li>
+                <li><a href="c_xl2tb.html">Tablize</a></li>
+                <li><a href="c_tb2dl.html">Table to DL</a></li>
+                <li><a href="c_bmlib.html">Bookmarklet</a></li>
+                <li class="divider"></li>
+                <li><a href="c_start.html">Introduction</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-right">
+            <li>
+              <div class="checkbox">
+                <label><input type="checkbox" id="displayProcedure">説明を表示する</label>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <!-- /navigation -->
+
+  </div>
+</nav><div id="info"></div>
+
+
+<h1 class="text-center"><span class="glyphicon glyphicon-cog spinning" aria-hidden="true" style="vertical-align: bottom;"></span> Operation Tools</h1>
+<hr>
+<p id="recentFile" class="text-center">&nbsp;</p>
+<hr>
+<section id="start">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-2 col-teamlogo">
+        <a class="btn btn-warning btn-lg btn-block btn-teamlogo" href="a_pcmut.html"><span>A</span> <br>TeamA</a>
+      </div>
+      <div class="col-xs-2 col-teamlogo">
+        <a class="btn btn-warning btn-lg btn-block btn-teamlogo" href="b_pcmut.html"><span>B</span> <br>TeamB</a>
+      </div>
+      <div class="col-xs-8">
+        <h2>PC Markup Tool <small>PCMUT</small></h2>
+        <p>原稿に専用のタグを追記するだけでニュースやページのPC/SP版ソースを作成することができます<br>
+          はじめにページ下部の専用タグを確認してください</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-2 col-teamlogo">
+        <a class="btn btn-success btn-lg btn-block btn-teamlogo" href="a_pc2fp.html"><span>A</span> <br>TeamA</a>
+      </div>
+      <div class="col-xs-2 col-teamlogo">
+        <a class="btn btn-success btn-lg btn-block btn-teamlogo" href="b_pc2fp.html"><span>B</span> <br>TeamB</a>
+      </div>
+      <div class="col-xs-8">
+        <h2>Convert PC to FP <small>PC2FP</small></h2>
+        <p>PC/SP版ソースが完成していればFP版のソースに変換することができます</p>
+      </div>
+    </div>
+  </div>
+  <hr>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="row">
+          <div class="col-xs-4 col-teamlogo">
+            <a class="btn btn-info btn-lg btn-block btn-teamlogo" href="a_4lbtb.html"><span>A</span> <br>TeamA</a>
+          </div>
+          <div class="col-xs-8">
+            <h2>Lookback <small>4GPTB</small></h2>
+            <p>原稿スプレッドシートから自動的にゲームプレビュー用ソースを生成します<p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="row">
+          <div class="col-xs-4 col-teamlogo">
+            <a class="btn btn-info btn-lg btn-block btn-teamlogo" href="b_results.html"><span>B</span> <br>TeamB</a>
+          </div>
+          <div class="col-xs-8">
+            <h2>Game Result <small>RESULTS</small></h2>
+            <p>球団からのスプレッドシートを各リーグの試合結果ニュースに変換します<p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="row">
+          <div class="col-xs-4 col-teamlogo">
+            <a class="btn btn-primary btn-lg btn-block btn-teamlogo" href="c_xl2tb.html"><span>C</span> <br>Common</a>
+          </div>
+          <div class="col-xs-8">
+            <h2>Tablize <small>XL2TB</small></h2>
+            <p>エクセルファイルやスプレッドシートからテーブルタグを生成します<p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="row">
+          <div class="col-xs-4 col-teamlogo">
+            <a class="btn btn-primary btn-lg btn-block btn-teamlogo" href="c_tb2dl.html"><span>C</span> <br>Common</a>
+          </div>
+          <div class="col-xs-8">
+            <h2>Table to DL <small>TB2DL</small></h2>
+            <p>テーブルタグをDLタグに変換します<p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="row">
+          <div class="col-xs-4 col-teamlogo">
+            <a class="btn btn-default btn-lg btn-block btn-teamlogo" href="c_bmlib.html"><span>C</span> <br>Common</a>
+          </div>
+          <div class="col-xs-8">
+            <h2>Bookmarklet <small>BMLIB</small></h2>
+            <p>ブックマークレットを登録できます<br>
+            ブックマークとして登録しておき、CMSや公式サイトを閲覧中に実行することで機能します<p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="row">
+          <div class="col-xs-4 col-teamlogo">
+            <a class="btn btn-danger btn-lg btn-block btn-teamlogo" href="c_csvdf.html"><span>C</span> <br>Common</a>
+          </div>
+          <div class="col-xs-8">
+            <h2>CSV Define <small>CSVDF</small></h2>
+            <p>文字列置換のルールをCSVから設定できます<br>
+            同じルールでページを量産するときに、簡単なCSVを作成してページ内で読み込んでください<p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6">
+        <div class="row">
+          <div class="col-xs-4 col-teamlogo">
+            <a class="btn btn-danger btn-lg btn-block btn-teamlogo" href="b_project.html"><span>B</span> <br>TeamB</a>
+          </div>
+          <div class="col-xs-8">
+            <h2>Project Automation <small>PROJA</small></h2>
+            <p>チームBの案件を半自動化するためのツールです。<p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6">
+        <div class="row">
+          <div class="col-xs-4 col-teamlogo">
+            <a class="btn btn-danger btn-lg btn-block btn-teamlogo" href="b_calendar.html"><span>B</span> <br>TeamB</a>
+          </div>
+          <div class="col-xs-8">
+            <h2>Store Calendar <small>CALENDAR</small></h2>
+            <p>ストア営業時間カレンダーのソースを自動生成します。<p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6">
+        <div class="row">
+          <div class="col-xs-4 col-teamlogo">
+            <a class="btn btn-danger btn-lg btn-block btn-teamlogo" href="b_train.html"><span>B</span> <br>TeamB</a>
+          </div>
+          <div class="col-xs-8">
+            <h2>Learn to Elements <small>TRAIN</small></h2>
+            <p>コーディングした内容が即時反映されるエディタです。<p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6">
+        <div class="well">
+          <h4>一時ファイルの管理</h4>
+          <p>ブラウザに保存されているツールの入力状況などを管理します</p>
+          <p class="text-center"><a href="javascript:setStorageLog();" style="margin-right: 16px;"><span class="glyphicon glyphicon-search"></span> ログを確認する</a> <a href="javascript:localStorage.clear();localStorage.clear();disableAfterLog.checked=false;
+;setStorageLog();"><span class="glyphicon glyphicon-remove"></span> 全て削除する</a></p>
+          <div id="infoStorage"></div>
+          <div class="checkbox text-center">
+            <label><input type="checkbox" id="disableAfterLog" name="disableAfterLog" value=""> 変換後のソースは記録しない</label>
+          </div>
+          <div class="checkbox text-center">
+            <label><input type="checkbox" id="disableAutoCopy" name="disableAutoCopy" value=""> 変換時に自動でコピーしない</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+<div class="row">
+  <div class="text-center text-muted">
+    Copyright &copy; 2017 &middot; Released under the MIT license &middot; Kaoru Yoshinaga
+  </div>
+</div>
+<hr>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script type="text/javascript" src="settings.txt"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript">
+  var tool = new ConverterPage({ before: null, after: null });
+  window.addEventListener('DOMContentLoaded', function() {
+    var today = Module.getNow('yymmdd');
+    if(localStorage['visitedAt'] !== today) {
+      localStorage.removeItem('recentFile');
+      localStorage['visitedAt'] = today;
+    }
+    if(localStorage['recentFile']) {
+      recentFile.innerHTML = '最近使用したファイル: <a href="' + localStorage['recentFile'] + '">' + localStorage['recentFile'] + '</a>';
+    } else {
+      recentFile.innerHTML = '公式サイト運用のためのツール集です';
+    }
+    log(Math.random() );
+    if(Math.random() > 0.80) { document.getElementsByClassName('spinning')[0].classList.add('spinning-hispeed'); }
+
+    if(localStorage['disableAfterLog'] == 'true') {
+      disableAfterLog.checked = true;
+    }
+    disableAfterLog.addEventListener('change', function() {
+      localStorage['disableAfterLog'] = disableAfterLog.checked;
+      if(disableAfterLog.checked) {
+        localStorage['disableAfterLog'] = 'true'; //論理型を持てないため
+        for(_key in localStorage) {
+          if(_key.match(/\.html$/)) {
+            localStorage.removeItem(_key);
+          }
+        }
+      } else {
+        localStorage.removeItem('disableAfterLog');
+      }
+    });
+
+    if(localStorage['disableAutoCopy'] == 'true') {
+      disableAutoCopy.checked = true;
+    }
+    disableAutoCopy.addEventListener('change', function() {
+      localStorage['disableAutoCopy'] = disableAutoCopy.checked;
+      if(disableAutoCopy.checked) {
+        localStorage['disableAutoCopy'] = 'true';
+        for(_key in localStorage) {
+          if(_key.match(/\.html$/)) {
+            localStorage.removeItem(_key);
+          }
+        }
+      } else {
+        localStorage.removeItem('disableAutoCopy');
+      }
+    });
+  });
+  function setStorageLog() {
+    var mapDataKind = {
+      'hideProcedure': '説明を表示しない',
+      'disableAutoCopy': '変換時に自動でコピーしない',
+      'disableAfterLog': '変換後のソースは記録しない',
+      'l_pcmut.html': 'PC Markup Tool (A)',
+      'b_pcmut.html': 'PC Markup Tool (B)',
+      'l_pc2fp.html': 'Convert PC to FP (A)',
+      'b_pc2fp.html': 'Convert PC to FP (B)',
+      'l_4lbtb.html': 'Lookback',
+      'b_results.html': 'League Result',
+      'b_project.html': 'Project Automation (B)',
+      'c_xl2tb.html': 'Tablize',
+      'c_tb2dl.html': 'Table to DL',
+      'c_csvdf.html': 'Comma-separated Define',
+      'c_csvdf.csv': 'CSVDF 最後に読み込んだCSVデータ',
+      'csvdf.fontsize': 'CSVDF フォントサイズ',
+      'b_results.gamemode': 'League Result (試合種別)',
+      recentFile: '最近使用したファイル',
+      visitedAt: '最後に利用した日付',
+    };
+    var source = '<dl class="dl-horizontal">\n';
+    var dataKind, dataValue, maxLength = 50;
+    for(_key in localStorage) {
+      dataKind = mapDataKind[_key] || _key;
+      dataValue = localStorage[_key];
+      if(dataValue.length > maxLength) { dataValue = dataValue.substr(0, maxLength) + '...'; }
+      source += '<dt>' + dataKind + '</dt>\n<dd>' + Convert.htmlSpecialChars(dataValue) + '</dd>\n';
+    }
+    source += '</dl>';
+    infoStorage.innerHTML = source;
+  }
+</script>
+</body>
+</html>

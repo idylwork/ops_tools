@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tablize</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link href="css/aparts.css" rel="stylesheet">
+<link href="css/afp.css" rel="stylesheet">
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+<style type="text/css">
+  .web-table-fix {
+    overflow: visible;
+  }
+  .box-dummy-preview {
+    color: #999999;
+    font-size: 40px;
+    text-align: center;
+    vertical-align: middle;
+    background: #cccccc;
+    width: 100%;
+    height: 80px;
+    padding-top: 11px;
+  }
+</style>
+
+<script type="text/javascript">
+function mapTranspose(a) {
+  return Object.keys(a[0]).map(function (c) {
+    return a.map(function (r) {
+      return r[c];
+    });
+  });
+}
+function breakCheck(str) {
+  return str.replace(/([\t\n])"([\s\S]*?)"(?=[\t\n]|$)/g, function(_all, _before, _cell) {
+    return _before + _cell.replace(/\n/g, '<br>')
+    .replace(/[\s]/g, '')
+    .replace(/""/g, '"');
+  })
+  .replace(/[　]{2,}/g,'<br>')
+  ;
+}
+
+function convSource(str) {
+  var thCol = document.conv.thCol.value,
+      thRow = document.conv.thRow.value,
+      colWidth = document.conv.toggle01.checked,
+      tdCenter = document.conv.toggle02.checked,
+      thNocolor = document.conv.thNocolor.checked,
+      tableSource = "",
+      tableMode = document.conv.tableMode.value;
+  if (tableMode === 'teamATicket') {
+    thCol = 2, thRow = 2, colWidth = true, tdCenter = true;
+  } else if (tableMode === 'teamBTicket') {
+    thCol = 2, colWidth = true, tdCenter = true;
+    if (str.match(/^.*\n.*\n\t/)) {
+      thRow = 3;
+    } else {
+      thRow = 2;
+    }
+    log(str);
+    str = str.replace(/^(.*?)\t\t(.*?)\t/gm, '$1\t$2\t');
+    log(str);
+  } else if (tableMode === 'pastRoster') {
+    thCol = 1, thRow = 1, colWidth = false, tdCenter = false;
+  }
+  cells = str.replace(/\n\t+(?=\n)/g, '').replace(/\n\s*$/g, '');
+  log (cells);
+  cells = cells.split('\n')
+  cells.forEach(function(row, rowId) {//行数ループ
+      cells[rowId] = row.split('\t');
+  });
+
+  if (tableMode === 'pastRoster') {
+    tableSource += '<div class="web-yearBlock01">\n<table class="web-table04 web-js-table-wrap">\n';
+  } else {
+    tableSource += '<table class="web-table01 web-js-table-wrap">\n';
+  }
+  tableSource += '<colgroup>';
+  if(colWidth) {
+    var colWidthPoint = Math.floor(100 / cells[0].length);
+    tableSource += '\n';
+    cells[0].forEach(function() {
+      tableSource += '  <col class="web-w' + colWidthPoint + 'p">\n';
+    });
+  } else {
+    cells[0].forEach(function() {
+      tableSource += '<col>';
+    });
+  }
+  tableSource += '</colgroup>\n<thead>\n';
+  cells.forEach(function(row, rowId) {//行数ループ
+    if (rowId == thRow) {
+      tableSource += '</thead>\n<tbody>\n';
+    }
+    tableSource += '  <tr>\n';
+
+    row.forEach(function(col, colId) {//列数ループ
+      var beforeCell = '<td', afterCell = '</td>', colSpan = 1;
+      if (tdCenter) {
+        beforeCell += ' class="web-text-center"';
+      }
+      if (rowId == 0 && colId == 0 && !col) {
+        col = '&nbsp;';
+      }
+
+      if (tableMode !== 'pastRoster') {
+        if (rowId < thRow && thNocolor === false) {
+          beforeCell = '<th class="web-bg-1"', afterCell = '</th>';
+        } else if (colId < thCol) {
+          beforeCell = '<th', afterCell = '</th>';
+        }
+      }
+
+      if (rowId < thRow) {
+        for (var colSpan = 1; row[colId + colSpan] == ''; colSpan++) {} //横に結合
+      } else {
+        for (var rowSpan = 1; cells[rowId + rowSpan]; rowSpan++) { //縦に結合
+          if (cells[rowId + rowSpan][colId] != '') {
+            //console.log("rowspan: " + cells[rowId+1][colId]);
+            break;
+          }
+        }
+      }
+      if (tableMode === 'teamATicket' || tableMode === 'teamBTicket') {
+        if (rowId == 0 && colId == 0) {
+          colSpan = thCol, rowSpan = thRow;
+        }
+        if (colId < thCol) {
+          for (var colSpan = 1; (row[colId + colSpan] == '')&&(colId + colSpan < thCol); colSpan++) {} //横に結合(th)
+        } else if (col.length == 1) {
+          colSpan = 1, rowSpan = 1;
+        } else {
+          for (var colSpan = 1; (row[colId + colSpan] == '')&&(colId + colSpan < (row.length)) ; colSpan++) {} //横に結合
+        }
+      }
+
+      if (tableMode === 'pastRoster') {
+        if (rowId < thRow) {
+          beforeCell = '<th class="web-bg-1"', afterCell = '</th>';
+          var colSpan = 2;
+        } else if (colId < thCol) {
+          if (row.length < 2) {
+            beforeCell = '<th class="web-bg-6"', afterCell = '</th>';
+            var colSpan = 2;
+          } else {
+            beforeCell = '<th', afterCell = '</th>';
+          }
+        }
+      } else {
+        if (rowId < thRow) {
+          beforeCell = '<th class="web-bg-1"', afterCell = '</th>';
+        } else if (colId < thCol) {
+          beforeCell = '<th', afterCell = '</th>';
+        }
+      }
+
+
+      if (col) {
+        tableSource += '    ' + beforeCell;
+        if (rowSpan > 1) {
+          tableSource += ' rowspan="' + rowSpan + '"';
+        }
+        if (colSpan > 1) {
+          tableSource += ' colspan="' + colSpan + '"';
+        }
+        tableSource += '>' + col + afterCell + '\n';
+      }
+    });
+    tableSource += '  </tr>\n';
+
+  });
+  tableSource += '</tbody>\n</table>\n';
+  if (tableMode === 'pastRoster') {
+    tableSource += '</div>\n';
+  }
+  if (tableMode === 'teamBTicket') {
+    str = str.replace(/<td class=\"web-text-center\">/g, '<td class="web-text-right">');
+    str = Convert.zenkaku(str);
+  }
+  str = tableSource;
+  return str;
+}
+
+function convSourceFp(str) {
+  var thCol = document.conv.thCol.value,
+      thRow = document.conv.thRow.value,
+      marginOn = document.conv.toggle02.checked,
+      tableSource = "",
+      theads = [],
+      tableMode = document.conv.tableMode.value;
+  if (document.conv.toggle01.checked) {
+    var beforeTh = '<span class="icon03">■</span>', afterTh = '<br>';
+  } else {
+    var beforeTh = '', afterTh = '';
+  }
+  if (tableMode === 'teamATicket' || tableMode === 'teamBTicket') {
+    thCol = 2, thRow = 2, beforeTh = '', afterTh = '', thNocolor = true;
+  }
+  var cells = str.replace(/\n\t+(?=\n)/g, '').replace(/\n\s*$/g, '');
+  cells = cells.split('\n')
+  cells.forEach(function(row, rowId) {//行数ループ(縦走査・項目名定義)
+    cells[rowId] = row.split('\t');
+    if (!tableMode === 'teamATicket' || tableMode === 'teamBTicket') {
+      theads[rowId] = cells[rowId].slice(0,thRow).filter(function(e){return e !== "";}).join(' ');
+    } else {
+      if (cells[rowId][0]) {
+        theads[rowId] ='<span class="icon03">▼</span>' + cells[rowId][0] + '<br>\n';
+        if(cells[rowId][1]) {
+          log(cells[rowId])
+          theads[rowId] += '<div class="fz_s">[' + cells[rowId][1] + ']</div>';
+        }
+      } else {
+        theads[rowId] = '<div class="fz_s">[' + cells[rowId][1] + ']</div>';
+      }
+    }
+  });
+  cells = mapTranspose(cells);
+  console.table(cells);
+  cells.forEach(function(row, rowId) {//行数ループ
+    if (rowId < thRow) {
+      return;
+    }
+    row.forEach(function(col, colId) {//列数ループ
+      if (!col) {
+        if(!tableMode === 'teamATicket' || tableMode === 'teamBTicket') {
+          for (var rowSpan = 1; cells[rowId - rowSpan]; rowSpan++) { //空白のときは上を走査
+            if (cells[rowId - rowSpan][colId] != '') {
+              col = cells[rowId - rowSpan][colId];
+              break;
+            }
+          }
+        } else {
+          for (var colScan = colId; !col; colScan--) { //空白のときは左を走査
+            log(colScan + '↓' + cells[rowId][colId]);
+            if (cells[rowId][colScan].length == 1) { //文字に当たったとき(記号)
+              colScan++;
+              for (var rowScan = rowId; !col; rowScan--) {
+                if (cells[rowScan][colScan] != '') {
+                  col = cells[rowScan][colScan];
+                  break;
+                }
+              }
+            } else if (cells[rowId][colScan] != '') { //文字に当たったとき(文字)
+              col = cells[rowId][colScan];
+              break;
+            }
+          }
+          log('(' + rowId + '-' + colId + ') ' + col);
+        }
+          /*for (var rowSpan = 1; cells[rowId - rowSpan][colId]; rowSpan++) { //空白のときは上を走査
+            if (cells[rowId - rowSpan][colId] != '') {
+              col = cells[rowId - rowSpan][colId];
+              log('▽走査中' + cells[rowId - rowSpan][colId]);
+              log(theads[colId] + '行 ' + colId + '列目の参照先: ' + col);
+              break;
+            }
+          }*/
+
+      }
+      if (colId < thCol) {//見出し列
+
+        if (colId == 0) { tableSource += '<div class="hd_04">'; }
+        if (!col) { col = '&nbsp;' }
+        tableSource += col;
+        if (colId == thCol-1) {
+          tableSource += '</div>\n';
+        } else {
+          tableSource += ' ';
+        }
+      } else {
+        if (theads[colId]) {//項目名+項目内容
+          tableSource += beforeTh + '' + theads[colId] + afterTh + '\n';
+        }
+        tableSource += col + '<br>\n';//セル
+        if (marginOn) {
+          tableSource += '<br>\n';
+        }
+      }
+    });
+    tableSource += '<br>\n';
+  });
+  str = tableSource;
+  return str;
+}
+
+//Convert Order
+function convertOrder() {
+  var str  = tool.before.value;
+  if(str) {
+    //str = Convert.proof(str, 'b');(整形に影響あり)
+    str = breakCheck(str);
+    if (!document.conv.fpMode.checked) {
+      str = convSource(str);
+      str = Convert.proof(str, 'b');
+    } else {
+      str = Convert.hankaku(str);
+      str = convSourceFp(str);
+      str = Convert.proof(str, 'b');
+    }
+  tool.after.value = str;
+    tool.finish('変換してクリップボードにコピーしました。', str);
+  } else {
+    tool.info('原稿エリアに何も入力されていません。');
+  }
+}
+
+//Act3 Color TD & Table Scroll-X
+function adjustTable(arg) {
+  var target = tool.after
+  var str = target.value;
+  var pos = {};
+  pos.start = target.selectionStart;
+  pos.end = target.selectionEnd;
+  var selected = str.slice(pos.start, pos.end);
+  var beforeSelect = str.slice(0, pos.start)
+  var afterSelect = str.slice(pos.end);
+  if(arg == 'td') {
+    selected = selected.replace(/<td>/g, '<td class="web-bg-3">');
+  } else if (arg == 'table') {
+    selected = selected
+      .replace(/<th>/, '<th class="js-threshold">')
+      .replace(/<!--\/\.表ここまで-->/g, '<!--/.表ここまで-->\n<ul class="web-control01">\n  <li><a class="web-prev" href="javascript:;">戻る</a></li>\n  <li><a class="web-next" href="javascript:;" >進む</a></li>\n</ul>')
+  }
+  if (pos.start != pos.end) {
+      target.value = beforeSelect + selected + afterSelect;
+  } else {
+      target.value = beforeSelect + afterSelect;
+  }
+  tool.previewRefresh();
+}
+</script>
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+      <span class="navbar-brand">C-XL2TB</span>
+    </div>
+    <!-- navigation -->
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="nav navbar-nav">
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamB<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="b_pcmut.html">PC Markup</a></li>
+                <li><a href="b_pc2fp.html">FP Convert</a></li>
+                <li><a href="b_project.html">Project Automation</a></li>
+                <li><a href="b_results.html">Game Result</a></li>
+                <li><a href="b_calendar.html">Store Calendar</a></li>
+              </ul>
+            </li>
+
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamA<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="a_pcmut.html">PC Markup</a></li>
+                <li><a href="a_pc2fp.html">FP Convert</a></li>
+                <li class="divider"></li>
+                <li><a href="a_4lbtb.html">Lookback</a></li>
+                <li><a href="a_mmbranch.html">Mail Magazine</a></li>
+              </ul>
+            </li>
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Common<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="c_csvdf.html">CSV Define</a></li>
+                <li><a href="c_xl2tb.html">Tablize</a></li>
+                <li><a href="c_tb2dl.html">Table to DL</a></li>
+                <li><a href="c_bmlib.html">Bookmarklet</a></li>
+                <li class="divider"></li>
+                <li><a href="c_start.html">Introduction</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-right">
+            <li>
+              <div class="checkbox">
+                <label><input type="checkbox" id="displayProcedure">説明を表示する</label>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <!-- /navigation -->
+
+  </div>
+</nav><div id="info"></div>
+
+<section id="xl2tb">
+  <form name="conv">
+    <h1 class="procedure"><span class="circle-text label-primary">1</span> Excelやスプレッドシートで表にしたい部分をコピー</h1>
+    <h1 class="procedure"><span class="circle-text label-primary">2</span> 原稿エリアに貼り付ける</h1>
+    <textarea name="before" class="form-control" rows="6" placeholder="Excelやスプレッドシートからコピー"></textarea>
+    <button type="button" class="btn btn-primary btn-lg btn-block" style="margin: 10px 0" onclick="convertOrder()"><span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span> Convert &amp; Copy</button>
+    <h1 class="procedure"><span class="circle-text label-primary">3</span> 目的に合わせて設定を変更して再変換</h1>
+    <div class="container">
+      <div class="col-xs-4">
+        <div class="form-group">
+          <label>モード</label>
+          <select class="form-control" id="tableMode" name="gameMode">
+            <option value="ordinary" selected="selected">通常</option>
+            <option value="teamATicket">L チケット残席情報</option>
+            <option value="teamBTicket">M チケット価格</option>
+            <option value="pastRoster">M 歴代所属選手</option>
+          </select>
+          <p class="procedure">特殊な形式のテーブルを作成する場合は選択する</p>
+        </div>
+      </div>
+      <div class="col-xs-2">
+        <div class="form-group">
+        <label>見出し行数</label>
+          <input type="number" name="thRow" value="1" min="0" class="form-control">
+        </div>
+        <p class="procedure">&lt;thead&gt;に指定される行数を設定する</p>
+      </div>
+      <div class="col-xs-2">
+        <div class="form-group">
+        <label>見出し列数</label>
+          <input type="number" name="thCol" value="1" min="0" class="form-control">
+        </div>
+        <p class="procedure">&lt;th&gt;に指定される列数を設定する</p>
+      </div>
+      <div class="col-xs-2">
+        <div class="checkbox">
+          <label><input type="checkbox" name="fpMode" value="">FPモード</label>
+          <p class="procedure">FPのソースを作成する(不安定)</p>
+        </div>
+      </div>
+      <div class="col-xs-2">
+        <div class="checkbox">
+          <label><input type="checkbox" name="toggle01" value=""><span id="labelToggle01">列幅指定</span></label>
+        </div>
+        <p class="procedure">&lt;col&gt;に幅を指定する</p>
+      </div>
+      <div class="col-xs-2">
+        <div class="checkbox">
+          <label><input type="checkbox" name="toggle02" value=""><span id="labelToggle02">中央寄せ</span></label>
+        </div>
+        <p class="procedure">&lt;td&gt;の文字を中央寄せする</p>
+      </div>
+      <div class="col-xs-2">
+        <div class="checkbox">
+          <label><input type="checkbox" name="thNocolor" value=""><span>見出し列無着色</span></label>
+        </div>
+        <p class="procedure">&lt;thead&gt;内のセルにweb-bg-1クラスを付加しない</p>
+      </div>
+    </div>
+
+
+  <div id="info" class="text-center" style="visibility: hidden; opacity: 0;"></div>
+
+      <div id="output" class="panel panel-default center-block" style="visibility: hidden; opacity: 0;">
+        <div class="panel-heading">簡易プレビュー</div>
+        <div class="panel-body">
+        </div>
+      </div>
+
+    <div class="container">
+      <div class="col-xs-6">
+        <button type="button" class="btn btn-default btn-lg btn-block" style="margin: 10px 0" onclick="tool.refreshOrder()"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 更新</button>
+        <p class="procedure">出力エリアの内容を簡易プレビューに範囲する</p>
+      </div>
+      <div class="col-xs-6">
+        <button type="button" class="btn btn-default btn-lg btn-block" style="margin: 10px 0" onclick="adjustTable('td')"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span> Color Selected Table-Cell</button>
+        <p class="procedure">ソースエリア内で&lt;td&gt;タグを範囲選択してクリックするとセルに背景色をつけます</p>
+      </div>
+    </div>
+    <h1 class="procedure"><span class="circle-text label-primary">3</span> ソースをコピーする</h1>
+    <textarea name="after" class="form-control" rows="6" placeholder="PC/SP共通ソース"></textarea>
+  </form>
+  <div class="well">
+    <p><a href="javascript:if(confirm('記述例を表示しますか？\n(原稿が入力されていた場合は上書きされます。)')){tool.before.value = '\t日時\t時間\t場所\nイベント１\t10/17\t17:00\tＡ市\nイベント２\t10/18\t15:00\tＢ市\n\t10/19\t\t\n&quot;イベント３\n（後日発表）&quot;\t10/20\t15:00\t未定\n';convertOrder()}"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 見本を表示する</a></p>
+    <hr>
+    <p><strong>変換 :</strong><br>
+      スプレッドシートを全選択して、原稿エリアにコピー後、Enter</p>
+    <p><strong>プレビューの更新 :</strong><br>
+      出力エリアにフォーカスして Enter</p>
+    <p><strong>表のセルを強調する :</strong><br>
+      出力エリアで強調する&lt;td&gt;を範囲選択し、『Color Selected Table-Cell』をクリック</p>
+    <p><strong>見出し行・列の数を変更する :</strong><br>
+      変換前に『見出し行』『見出し列』の数をそれぞれ変更する</p>
+    <p><strong>列幅を設定する :</strong><br>
+      変換前に『列幅指定』にチェックを入れる</p>
+    <p><strong>試合前日に作成する :</strong><br>
+      変換前に『中央寄せ』にチェックを入れる</p>
+    <p><strong>FP版のソースを生成する :</strong><br>
+      変換前に『FPモード』にチェックを入れる<br>
+      (オプションが切り替わります) </p>
+      <div class="bracket">
+        <strong>見出し項目をアイコンにする :</strong>
+        『Heading Icon』にチェックを入れる<br>
+        <strong>行間を広げる :</strong>
+        『Margin』にチェックを入れる<br>
+      </div>
+  </div>
+</section>
+<hr>
+<div class="row">
+  <div class="text-center text-muted">
+    Copyright &copy; 2017 &middot; Released under the MIT license &middot; Kaoru Yoshinaga
+  </div>
+</div>
+<hr>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script type="text/javascript" src="settings.txt"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript">
+  function outputFilter(str) {
+    return str
+      .replace(/<img src="\/cmn\/images\/lookback\/(xh_\d{6})\.jpg">/g, '<div class="box-dummy-preview">$1<span class="disable-select">.jpg</span></div>')
+      .replace(/<a href="(.*?)">/g, '<a href="$1" target="ops_preview">')
+      .replace(/<\/span><\/h2>/g, '<\/span><\/h2>')
+      .replace(/ (href|src)="\//g, ' $1="http://www.a.example.com/');
+  }
+  var tool = new ConverterPage({ outputFilter: outputFilter });
+  document.conv.fpMode.onchange = function() {
+    if(document.conv.fpMode.checked) {
+      document.getElementById('labelToggle01').innerHTML = 'アイコン見出し';
+      document.getElementById('labelToggle02').innerHTML = '幅をあける';
+    } else {
+      document.getElementById('labelToggle01').innerHTML = '列幅指定';
+      document.getElementById('labelToggle02').innerHTML = '中央寄せ';
+    }
+  }
+</script>
+</body>
+</html>

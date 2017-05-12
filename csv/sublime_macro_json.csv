@@ -1,0 +1,11 @@
+"",\""
+\n,\\n
+/^([\s\S]*)$/,"[
+ {
+  ""args"": {
+   ""characters"": ""$1""
+  },
+  ""command"": ""insert""
+ },
+ { ""args"": null, ""command"": ""select_all"" }, { ""args"": { ""single_line"": true }, ""command"": ""reindent"" }
+]"

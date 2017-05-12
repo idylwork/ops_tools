@@ -1,0 +1,646 @@
+@charset "UTF-8";
+/* ---------- 汎用クラス ---------- */
+.hidden {
+  display: none;
+}
+.visible {
+  display: block !important;
+}
+
+.disable-select {
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.disable-click {
+  pointer-events: none;
+}
+
+/* 丸数字 */
+.circle-text {
+  color: #ffffff;
+  /*background-color: #666660;*/
+  padding-bottom: 2px;
+  margin: 0;
+  width: 45px;
+  line-height: 43px;
+  text-align: center;
+  display: inline-block;
+  border-radius: 50%;
+}
+
+/* 複数行の括弧 */
+.bracket {
+  position: relative;
+  width: 100%;
+  padding: 5px 20px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+
+  &::before,
+  &::after {
+    position: absolute;
+    top: 0;
+    content: "";
+    width: 6px;
+    height: 100%;
+    border-top: 1px solid #555;
+    border-bottom: 1px solid #555;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  &::before {
+    left: 0;
+    border-left: 1px solid #555;
+  }
+  &::after {
+    right: 0;
+    border-right: 1px solid #555;
+  }
+  ul {
+    padding-left: 26px;
+  }
+}
+
+@keyframes rotate-right {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spinning {
+  animation-name: rotate-right;
+  animation-duration: 60s;
+  animation-direction: normal;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+
+  .spinning-hispeed {
+    color: #1f659a;
+    animation-duration: 3s;
+  }
+}
+
+.procedure {
+  color: #585852;
+  display: none;
+}
+
+p.procedure {
+  font-size: 10px;
+}
+
+.eg-mark {
+  font-size: 8px;
+  color: #cccccc;
+  margin: 0 2px;
+}
+span.eg-mark {
+  border: 1px solid #eeeeee;
+  padding: 1px 2px 0px;
+}
+
+/* プレビューパネル内汎用設定 */
+.panel-body {
+  font: 1.4rem Helvetica, Arial, Tahoma, sans-serif;
+  font-family: "メイリオ", "meyrio", sans-serif;
+  line-height: 1.7;
+  overflow: hidden;
+
+  .web-image-container01 figure {
+    max-width: 320px;
+    margin: auto;
+  }
+  .web-list-memo-02 {
+    padding-left: 5px;
+  }
+  img {
+    max-width: 100%;
+  }
+  .dummy-img {
+    font-size: 20px;
+    font-weight: 900;
+    text-align: center;
+    width: 100%;
+    padding: 30% 0;
+    color: #aaaaaa;
+    background: #cccccc;
+    overflow: hidden;
+  }
+
+  a,
+  a:visited,
+  a:hover,
+  a:focus {
+    color: #1d3994;
+  }
+  a:hover,
+  a:focus {
+    text-decoration: none;
+    opacity: 0.7;
+  }
+}
+
+.panel-confirm {
+  color: LightSteelBlue;
+  font-size: 12px;
+  padding: 5px 5px 0;
+}
+.panel-notice {
+  color: crimson;
+  padding: 20px;
+  border-top: 1px solid crimson;
+}
+
+/* 自動置換ログエリア 汎用設定 */
+#replaceLogArea {
+  margin-bottom: 5px;
+  > h2 {
+    color: #bbbbaa;
+    font-size: 10px;
+    margin: 0;
+    display: inline;
+  }
+  > .label {
+    background-color: #bbbbaa;
+    margin-left: 3px;
+    margin-right: 3px;
+    white-space: normal;
+    display: inline-block;
+  }
+  > .label-danger {
+    background-color: #d9534f;
+  }
+}
+
+/* ---------- ConverterPage 全般 ---------- */
+.hidden-console {
+  visibility: hidden;
+  opacity: 0;
+}
+
+textarea {
+  &::-webkit-input-placeholder {
+    text-align: right;
+    font-size: 20px;
+    font-family: "游明朝", YuMincho, "ヒラギノ明朝 ProN W3",
+      "Hiragino Mincho ProN", "HG明朝E", "ＭＳ Ｐ明朝", "ＭＳ 明朝", serif;
+  }
+  &:-ms-input-placeholder {
+    text-align: right;
+    font-size: 20px;
+    font-family: "游明朝", YuMincho, "ヒラギノ明朝 ProN W3",
+      "Hiragino Mincho ProN", "HG明朝E", "ＭＳ Ｐ明朝", "ＭＳ 明朝", serif;
+  }
+  &::-moz-placeholder {
+    text-align: right;
+    font-size: 20px;
+    font-family: "游明朝", YuMincho, "ヒラギノ明朝 ProN W3",
+      "Hiragino Mincho ProN", "HG明朝E", "ＭＳ Ｐ明朝", "ＭＳ 明朝", serif;
+  }
+}
+
+#info {
+  font-size: 16px;
+  text-align: center;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  color: #ffffff;
+  background-color: #3e3f3a;
+  transition-property: opacity;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in-out;
+  opacity: 0;
+  z-index: 100;
+  text-shadow: 0 0 5px #77796e;
+  pointer-events: none;
+
+  &.info-appear {
+    opacity: 0.9;
+  }
+  .info-attn {
+    color: #ff9494;
+  }
+}
+
+.col-xs-2.col-teamlogo {
+  padding: 4px;
+}
+.btn.btn-teamlogo {
+  line-height: 0.8;
+}
+.btn-teamlogo span {
+  font-size: 50px;
+  font-family: "游明朝", YuMincho, "ヒラギノ明朝 ProN W3",
+    "Hiragino Mincho ProN", "HG明朝E", "ＭＳ Ｐ明朝", "ＭＳ 明朝", serif;
+  vertical-align: bottom;
+}
+
+/* ---------- bootstrap.css の上書き ---------- */
+section {
+  padding: 0 20px;
+}
+.well *:last-child {
+  margin-bottom: 0;
+}
+
+.dl-horizontal dt {
+  float: left;
+  width: 160px;
+  clear: left;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  color: dimgray;
+  line-height: 1.9;
+}
+.dl-horizontal dd {
+  margin-left: 180px;
+}
+
+@media (min-width: 768px) {
+  .dl-horizontal dt {
+    width: 140px;
+  }
+  .dl-horizontal dd {
+    margin-left: 160px;
+  }
+}
+.well {
+  margin-top: 10px;
+}
+.btn {
+  margin: 10px 0;
+  overflow: hidden;
+  transition: 0.6s;
+}
+.btn:hover {
+  letter-spacing: 1px;
+  transition: 0.4s;
+}
+.btn-xs {
+  min-width: 40px;
+  text-transform: initial !important;
+}
+.navbar .nav > li > .checkbox {
+  color: #ffffff;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.input-group textarea {
+  height: 46px;
+  resize: none;
+  box-shadow: rgba(9, 1, 4, 0.09804) 1px 1px 4px 1px inset;
+  -webkit-box-shadow: rgba(9, 1, 4, 0.09804) 1px 1px 4px 1px inset;
+  -moz-box-shadow: rgba(9, 1, 4, 0.09804) 1px 1px 4px 1px inset;
+}
+.input-group-btn .btn {
+  margin: unset;
+  &:hover {
+    letter-spacing: unset;
+  }
+}
+
+/* ---------- PCMUT ---------- */
+#pcmut {
+  .theme-color-bg {
+    background: #ef5c0e;
+  }
+  .panel-body img {
+    max-width: none;
+  }
+  .box-foot-info {
+    margin: 10px 0;
+  }
+
+  /* 文法エラー */
+  .web-containerBA.web-container-AB {
+    color: darkviolet;
+
+    > * {
+      color: #3e3f3a;
+    }
+  }
+}
+
+/* ---------- CSVDF ---------- */
+#dropfile {
+  border: 2px dashed #bbb;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  padding: 25px;
+  text-align: center;
+  font: 20pt bold "Vollkorn";
+  color: #bbb;
+  margin-bottom: 15px;
+  background: #fbf6f6;
+  min-height: 240px;
+  max-height: 400px;
+  overflow: scroll;
+
+  dt::after {
+    content: " →";
+  }
+  dl {
+    margin-bottom: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  dd {
+    color: initial;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .has-changed {
+    color: crimson;
+  }
+}
+
+#output .has-changed {
+  color: crimson;
+  cursor: pointer;
+}
+
+#rollback-baloon {
+  position: absolute;
+  position: absolute;
+  background: #aaaaaa;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  opacity: 0.95;
+
+  &:after {
+    border: 5px solid transparent;
+    border-top-color: #aaaaaa;
+    border-bottom-width: 0;
+    bottom: -5px;
+    content: "";
+    display: block;
+    left: 12px;
+    position: absolute;
+    width: 0;
+  }
+
+  &.baloon-hidden {
+    opacity: 0 !important;
+    transition: 1s;
+    box-shadow: 0 0 30px 13px #bbbbbb;
+  }
+}
+
+/* ---------- RESULTS ---------- */
+#results {
+  .panel-heading {
+    font-size: 20px;
+  }
+  .web-score-table-01 {
+    margin-bottom: 20px;
+  }
+  .web-score-table-01 th,
+  .web-score-table-01 td {
+    text-align: center;
+    border: 1px solid #cccccc;
+    line-height: 24px;
+  }
+  .web-score-table-01 thead th {
+    white-space: nowrap;
+    font-size: 10px;
+    background-color: #ebebeb;
+  }
+  .web-score-table-01 tbody th {
+    background-color: #cccccc;
+    width: 130px;
+  }
+  .web-score-table-01 tbody td {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    color: #006600;
+    width: 25px;
+  }
+  .forSP {
+    color: #888888;
+  }
+  #output .panel-body .web-containerBA .web-table01 th,
+  #output .panel-body .web-containerBA .web-table01 td {
+    padding: 5px 2%;
+  }
+}
+
+/* ---------- 4GPTB ---------- */
+#lookback {
+  .web-table-fix {
+    width: 840px;
+  }
+  .box-dummy-preview {
+    color: #999999;
+    font-size: 40px;
+    text-align: center;
+    vertical-align: middle;
+    background: #cccccc;
+    width: 100%;
+    height: 80px;
+    padding-top: 11px;
+  }
+
+  td[onclick]:hover {
+    background: #fff5e9 !important;
+    cursor: default !important;
+  }
+  td[onclick].web-bg-3:hover {
+    background: #ffd5c2 !important;
+    cursor: default !important;
+  }
+  th[onclick]:hover {
+    background: #ffc5a5 !important;
+    cursor: e-resize;
+  }
+
+  .web-lookbackEventBtn {
+    background: #dcdcdc;
+    padding: 15px 20px 15px;
+  }
+  .web-lookbackEventBtn > .web-btn-container {
+    margin: 0;
+  }
+}
+
+/* ---------- PROJECT ---------- */
+#itemsEditor {
+  textarea {
+    height: 30px;
+    resize: none;
+    box-shadow: rgba(9, 1, 4, 0.09804) 1px 1px 4px 1px inset;
+    -webkit-box-shadow: rgba(9, 1, 4, 0.09804) 1px 1px 4px 1px inset;
+    -moz-box-shadow: rgba(9, 1, 4, 0.09804) 1px 1px 4px 1px inset;
+  }
+  textarea.multiline {
+    resize: vertical;
+    overflow: hidden;
+  }
+  textarea::-webkit-input-placeholder {
+    text-align: unset;
+    font-size: unset;
+    font-family: unset;
+  }
+  textarea:-ms-input-placeholder {
+    text-align: unset;
+    font-size: unset;
+    font-family: unset;
+  }
+  textarea::-moz-placeholder {
+    text-align: unset;
+    font-size: unset;
+    font-family: unset;
+  }
+}
+
+/* ---------- TRAIN ---------- */
+#train {
+  #output {
+    > .panel-body {
+      min-height: 400px;
+    }
+    > .panel-heading .radio-inline:not(:first-child) {
+      padding-top: 6px;
+    }
+    > .panel-heading input[type="radio"] {
+      display: unset !important;
+
+      + label {
+        line-height: unset;
+        position: unset;
+        padding-left: unset;
+        margin-right: unset;
+      }
+      + label:before {
+        content: unset;
+        top: unset;
+        left: unset;
+        width: unset;
+        height: unset;
+        margin-top: 0;
+        background: unset;
+      }
+    }
+    > .panel-body .web-containerB > *,
+    > .panel-body .web-cellColumn2 > *,
+    > .panel-body .web-containerB > *.web-image-container02,
+    > .panel-body .web-cellColumn2 > *.web-image-container02 {
+      max-width: 48%;
+      padding: 0 5px 4px;
+    }
+
+    .pcOnly .web-dl-wrap dl dt {
+      width: 20%;
+    }
+    .pcOnly .web-dl-wrap dl dd {
+      margin-left: 20%;
+    }
+    .panel-body .web-list-memo-02 {
+      list-style: none;
+    }
+  }
+}
+.invalid-official-css input[type="button"],
+.invalid-official-css button {
+  width: unset;
+}
+
+/* ---------- CALENDAR ---------- */
+#calendar {
+  #output .panel-body .web-schedule-table {
+    table-layout: fixed;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+
+    td {
+      height: 100px;
+      &.web-noEventDay > .web-schedule-date {
+        color: #999 !important;
+      }
+    }
+    .web-noEventDay {
+      background: #f9f9f9;
+      color: #999;
+    }
+  }
+  #output .panel-body .web-schedule-date {
+    white-space: nowrap;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  #output .panel-body .web-open-time-01,
+  #output .panel-body .web-open-time-02,
+  #output .panel-body .web-open-time-01,
+  #output .panel-body .web-open-time-02 {
+    cursor: pointer;
+  }
+
+  #output .panel-body #changeItem {
+    width: 100%;
+    resize: none;
+  }
+
+  .web-text-red {
+    color: #d70234 !important;
+  }
+}
+
+.input-group-btn #download .btn {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.panel-heading {
+  text-transform: initial !important;
+}
+.web-dl-wrap dl {
+  margin-bottom: 0;
+}
+
+/* ---------- MMBRANCH ---------- */
+#mmbranch #output .panel-body #contents .topics01 .topicsImg01.dummy-img {
+  padding: 12% 0;
+}
+
+/* ---------- STATS ---------- */
+#stats {
+  #excludedLogArea {
+    margin-bottom: 5px;
+
+    > h2 {
+      color: #bbbbaa;
+      font-size: 10px;
+      margin: 0;
+      display: inline;
+    }
+    > .label {
+      background-color: #bbbbaa;
+      margin-left: 3px;
+      margin-right: 3px;
+      white-space: normal;
+      display: inline-block;
+    }
+    > .label-danger {
+      background-color: #d9534f;
+    }
+  }
+}

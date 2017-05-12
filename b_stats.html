@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fukuura2000 Stats</title>
+    <link rel="icon" type="image/png" href="img/favicon.png">
+    <link href="css/aparts.css" rel="stylesheet">
+    <link href="css/afp.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <style type="text/css">
+      .web-table-fix {
+        overflow: visible;
+      }
+      .box-dummy-preview {
+        color: #999999;
+        font-size: 40px;
+        text-align: center;
+        vertical-align: middle;
+        background: #cccccc;
+        width: 100%;
+        height: 80px;
+        padding-top: 11px;
+      }
+    </style>
+
+    <script type="text/javascript">
+      function mapTranspose(a) {
+        return Object.keys(a[0]).map(function (c) {
+          return a.map(function (r) {
+            return r[c];
+          });
+        });
+      }
+      function breakCheck(str) {
+        return str.replace(/([\t\n])"([\s\S]*?)"(?=[\t\n]|$)/g, function(_all, _before, _cell) {
+          return _before + _cell.replace(/\n/g, '<br>')
+            .replace(/[\s]/g, '')
+            .replace(/""/g, '"');
+        })
+          .replace(/[　]{2,}/g,'<br>')
+        ;
+      }
+
+      function convSource(str) {
+        /** 取得データ配列 */
+        let items = [];
+        /** 出力データ パーツ */
+        let blocks = [];
+
+        let year = document.conv.year.value;
+
+        /** 原稿テーブル中の特定テーブル開始位置 */
+        let tableRow = { batter: [], pitcher: [] };
+        /** 原稿テーブル */
+        let table = [];
+        str = Convert.alphanumeric(str);
+        str = Convert.htmlSpecialChars(str);
+        let rows = str.split('\n');
+        if (rows.length < 96) {
+          for (let i = rows.length; i < 96; i++) { rows.push(""); }
+        }
+
+        rows.forEach((_row, _rowId) => {
+          table[_rowId] = _row.split('\t');
+          // 行ごとの操作
+          if (table[_rowId].length < 34) {
+            for (let i = table[_rowId].length; i < 34; i++) { table[_rowId].push(""); }
+          }
+        });
+
+        let teams = {
+          'チームC': 'C TEAM',
+        };
+
+        /** 各シーズン始まり時点でのヒット数合計 */
+        let hitInitials = {
+          1998: 63, 1999: 195, 2000: 266, 2001: 398,
+          2002: 554, 2003: 702, 2004: 874, 2005: 1033,
+          2006: 1163, 2007: 1299, 2008: 1401, 2009: 1479,
+          2010: 1587, 2011: 1682, 2012: 1762, 2013: 1807,
+          2014: 1839, 2015: 1865, 2016: 1912, 2017: 1932,
+          2018: 1962,
+        };
+
+        /** 弾いた打席結果のリスト(キー名として収集して最後に配列にする) */
+        blocks.excluded = {};
+        blocks.theader = '<div class="statsYear">\n  <h4>' + year + '</h4>\n  <div class="statsYearTable">\n    <table class="web-table01">\n      <colgroup><col class="web-w-10"><col><col></colgroup>\n      <tbody>\n';
+        blocks.tfooter = '      </tbody>\n    </table>\n  </div>\n</div>';
+
+        blocks.tr = ['        <tr>\n', '        </tr>\n'];
+        blocks.th = ['          <th>', '</th>\n'];
+        blocks.td = ['          <td>', '</td>\n'];
+        blocks.result = ['<span class="statsResult">', '</span>']
+        blocks.flag = ['<span class="statsFlag">', '</span>'];
+        blocks.flag100 = ['<span class="statsFlag statsFlag100">', '</span>'];
+        blocks.flag500 = ['<span class="statsFlag statsFlag500">', '</span>'];
+
+        blocks.tbody = '';
+
+        let hitsSum = hitInitials[year] || 0;
+
+        //テーブルの数だけ走査
+        Object.keys(table).forEach((_rowId) => {
+          if (/\d{1,2}月\d{1,2}日/.test(table[_rowId][1])) {
+            let bats = table[_rowId].slice(12,20);
+            blocks.hits = [];
+            bats.forEach((_bat) => {
+              _bat = _bat.replace(/ \d$/, '');
+              if (/[安二三本線]/.test(_bat) && !/(?:[飛犠ゴ直]|三振|併打|見逃)/.test(_bat)) {
+                //ヒットだった場合
+                hitsSum++;
+                if (hitsSum % 500 === 0) {
+                  _bat = _bat + blocks.flag500[0] + hitsSum + blocks.flag500[1];
+                } else if (hitsSum % 100 === 0) {
+                  _bat = _bat + blocks.flag100[0] + hitsSum + blocks.flag100[1];
+                } else if (hitsSum % 10 === 0) {
+                  _bat = _bat + blocks.flag[0] + hitsSum + blocks.flag[1];
+                }
+                blocks.hits.push('<span class="statsResult">' + _bat + '</span>');
+
+              } else {
+                blocks.excluded[_bat] = false;
+              }
+            });
+            if (blocks.hits.length > 0) {
+              blocks.tbody += blocks.tr[0]
+              blocks.tbody += blocks.th[0] + table[_rowId][1].replace(/(\d{1,2})月(\d{1,2})日/g, '$1.$2') + blocks.th[1];
+              blocks.tbody += blocks.td[0] + (teams[table[_rowId][3]] || table[_rowId][3]) + blocks.td[1];
+              blocks.tbody += blocks.td[0] + blocks.hits.join('・') + blocks.td[1];
+              blocks.tbody += blocks.tr[1];
+            }
+          }
+        });
+
+        blocks.excluded = Object.keys(blocks.excluded);
+        log(blocks.excluded);
+
+        //ログの出力
+        let logs = "";
+        if (blocks.excluded.length > 0) {logs = '<h2>除外した打席</h2> '}
+        blocks.excluded.forEach((_log) => {
+          if (_log.indexOf('[?] ') < 0) {
+            logs += '<span class="label">' + _log + '</span>';
+          } else {
+            _log = _log.slice(3);
+            logs += '<span class="label label-danger"><span class="glyphicon glyphicon-question-sign"></span> ' + _log + '</span>';
+          }
+        });
+        /*
+  for (let _char of blocks.excluded) {
+    if (_char.indexOf('[?] ') < 0) {
+      logs += '<span class="label">' + _char + '</span>';
+    } else {
+      _char = _char.slice(3);
+      logs += '<span class="label label-danger"><span class="glyphicon glyphicon-question-sign"></span> ' + _char + '</span>';
+    }
+  }
+  */
+        log(logs);
+        document.getElementById('excludedLogArea').innerHTML = logs;
+
+        str = blocks.theader + blocks.tbody + blocks.tfooter;
+        return str;
+      }
+
+      //Convert Order
+      function convertOrder() {
+        var str  = tool.before.value;
+        if(str) {
+          //str = Convert.proof(str, 'b');(整形に影響あり)
+          str = breakCheck(str);
+          str = convSource(str);
+          str = Convert.proof(str, 'b');
+          tool.after.value = str;
+          tool.finish('変換してクリップボードにコピーしました。', str);
+        } else {
+          tool.info('原稿エリアに何も入力されていません。');
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+          <span class="navbar-brand">B-STATS</span>
+        </div>
+        <!-- navigation -->
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="nav navbar-nav">
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamB<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="b_pcmut.html">PC Markup</a></li>
+                <li><a href="b_pc2fp.html">FP Convert</a></li>
+                <li><a href="b_project.html">Project Automation</a></li>
+                <li><a href="b_results.html">Game Result</a></li>
+                <li><a href="b_calendar.html">Store Calendar</a></li>
+              </ul>
+            </li>
+
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamA<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="a_pcmut.html">PC Markup</a></li>
+                <li><a href="a_pc2fp.html">FP Convert</a></li>
+                <li class="divider"></li>
+                <li><a href="a_4lbtb.html">Lookback</a></li>
+                <li><a href="a_mmbranch.html">Mail Magazine</a></li>
+              </ul>
+            </li>
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Common<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="c_csvdf.html">CSV Define</a></li>
+                <li><a href="c_xl2tb.html">Tablize</a></li>
+                <li><a href="c_tb2dl.html">Table to DL</a></li>
+                <li><a href="c_bmlib.html">Bookmarklet</a></li>
+                <li class="divider"></li>
+                <li><a href="c_start.html">Introduction</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-right">
+            <li>
+              <div class="checkbox">
+                <label><input type="checkbox" id="displayProcedure">説明を表示する</label>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <!-- /navigation -->
+
+      </div>
+    </nav><div id="info"></div>
+
+    <section id="stats">
+      <form name="conv">
+        <h1 class="procedure"><span class="circle-text label-primary">1</span> Excelやスプレッドシートで表にしたい部分をコピー</h1>
+        <h1 class="procedure"><span class="circle-text label-primary">2</span> 原稿エリアに貼り付ける</h1>
+        <textarea name="before" class="form-control" rows="6" placeholder="Excel原稿からコピー"></textarea>
+        <button type="button" class="btn btn-primary btn-lg btn-block" style="margin: 10px 0" onclick="convertOrder()"><span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span> Convert &amp; Copy</button>
+        <h1 class="procedure"><span class="circle-text label-primary">3</span> 目的に合わせて設定を変更して再変換</h1>
+        <div class="container">
+          <div class="col-xs-8">
+            <div class="form-group">
+              <div id="excludedLogArea"></div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label>スタッツ年号</label>
+              <input type="number" name="year" class="form-control" value="1997" min="1992" max="2020">
+            </div>
+          </div>
+        </div>
+
+
+        <div id="info" class="text-center"></div>
+
+        <div id="output" class="panel panel-default center-block" style="visibility: hidden; opacity: 0;">
+          <div class="panel-heading">簡易プレビュー</div>
+          <div class="panel-body">
+          </div>
+        </div>
+
+        <div class="container">
+          <div class="col-xs-6">
+            <button type="button" class="btn btn-default btn-lg btn-block" style="margin: 10px 0" onclick="tool.refreshOrder()"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 更新</button>
+          </div>
+          <div class="col-xs-6">
+            <button type="button" class="btn btn-default btn-lg btn-block" style="margin: 10px 0" onclick="adjustTable('td')"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span> Color Selected Table-Cell</button>
+          </div>
+        </div>
+        <h1 class="procedure"><span class="circle-text label-primary">3</span> ソースをコピーする</h1>
+        <textarea name="after" class="form-control" rows="6" placeholder="PC/SP共通ソース"></textarea>
+      </form>
+      <div class="well">
+        <p><a href="javascript:if(confirm('記述例を表示しますか？\n(原稿が入力されていた場合は上書きされます。)')){tool.before.value = '\t日時\t時間\t場所\nイベント１\t10/17\t17:00\tＡ市\nイベント２\t10/18\t15:00\tＢ市\n\t10/19\t\t\n&quot;イベント３\n（後日発表）&quot;\t10/20\t15:00\t未定\n';convertOrder()}"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 見本を表示する</a></p>
+        <hr>
+        <p><strong>変換 :</strong><br>
+          スプレッドシートを全選択して、原稿エリアにコピー後、Enter</p>
+        <p><strong>プレビューの更新 :</strong><br>
+          出力エリアにフォーカスして Enter</p>
+        <p><strong>表のセルを強調する :</strong><br>
+          出力エリアで強調する&lt;td&gt;を範囲選択し、『Color Selected Table-Cell』をクリック</p>
+        <p><strong>横に長いテーブルに水平スクロールを付ける :</strong><br>『表ここから』から『表ここまで』のコメントアウトを選択し、『Add Scroll to Selected Table』をクリック</p>
+        <p><strong>試合前日に作成する :</strong><br>
+          変換前に『Lookback Date』の日付を変更する</p>
+        <p><strong>見出し行・列の数を変更する :</strong><br>
+          変換前に『Heading Row』『Heading Column』の数をそれぞれ変更する</p>
+        <p><strong>列幅を設定する :</strong><br>
+          変換前に『Column Width』にチェックを入れる</p>
+        <p><strong>試合前日に作成する :</strong><br>
+          変換前に『TD Center』にチェックを入れる</p>
+        <p><strong>FP版のソースを生成する :</strong><br>
+          変換前に『FP Mode』にチェックを入れる<br>
+          (オプションが切り替わります) </p>
+        <div class="bracket">
+          <strong>見出し項目をアイコンにする :</strong>
+          『Heading Icon』にチェックを入れる<br>
+          <strong>行間を広げる :</strong>
+          『Margin』にチェックを入れる<br>
+        </div>
+      </div>
+    </section>
+    <hr>
+    <div class="row">
+      <div class="text-center text-muted">
+        Copyright &copy; 2017 &middot; Released under the MIT license &middot; Kaoru Yoshinaga
+      </div>
+    </div>
+    <hr>
+    <script src="js/jquery-1.11.3.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="settings.txt"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript">
+      function outputFilter(str) {
+        return str
+          .replace(/<img src="\/cmn\/images\/lookback\/(xh_\d{6})\.jpg">/g, '<div class="box-dummy-preview">$1<span class="disable-select">.jpg</span></div>')
+          .replace(/<a href="(.*?)">/g, '<a href="$1" target="ops_preview">')
+          .replace(/<\/span><\/h2>/g, '<\/span><\/h2>')
+          .replace(/ (href|src)="\//g, ' $1="http://www.a.example.com/');
+      }
+      var tool = new ConverterPage({ outputFilter: outputFilter });
+    </script>
+  </body>
+</html>

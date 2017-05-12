@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DL Convert</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link href="css/aparts.css" rel="stylesheet">
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+<script type="text/javascript">
+var convertProcess = function (str) {
+  return str
+  .replace(/<table.*?>/g, '<div class="web-dl-wrap">\n')
+  .replace(/<\/table>/g, '</div>')
+  .replace(/<\/?t(head|body)>/g, '') //thで前方一致するためあらかじめ除去
+  .replace(/<\/?col.*?>/g, '')
+  .replace(/<tr.*?>([\s\S]*?)<\/tr>/g, function(_all, _tr) {
+    _tr = _tr.replace(/<t[hd].*?>\s*([\s\S]*?)<\/t[hd]>/, '<dt>$1</dt>')
+    _tr = _tr.replace(/<t[hd].*?>([\s\S]*?)<\/t[hd]>/g, '<dd>$1</dd>')
+    return '<dl>\n' + _tr + '</dl>';
+  })
+  .replace(/(\s*?\n){2,}/g, '\n')
+  ;
+};
+
+//Convert Order
+function convertOrder() {
+  tool.convertPrepare();
+  var str  = tool.before.value;
+  if(str) {
+    str = Convert.proof(str);
+    str = convertProcess(str);
+    str = Convert.mark(str);
+    str = Convert.lineCompress(str);
+    tool.after.value = str;
+    tool.finish('変換してクリップボードにコピーしました。', str);
+  } else {
+    tool.info('PC版ソースに何も入力されていません。');
+  }
+}
+</script>
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+      <span class="navbar-brand">C-TB2DL</span>
+    </div>
+    <!-- navigation -->
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="nav navbar-nav">
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamB<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="b_pcmut.html">PC Markup</a></li>
+                <li><a href="b_pc2fp.html">FP Convert</a></li>
+                <li><a href="b_project.html">Project Automation</a></li>
+                <li><a href="b_results.html">Game Result</a></li>
+                <li><a href="b_calendar.html">Store Calendar</a></li>
+              </ul>
+            </li>
+
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamA<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="a_pcmut.html">PC Markup</a></li>
+                <li><a href="a_pc2fp.html">FP Convert</a></li>
+                <li class="divider"></li>
+                <li><a href="a_4lbtb.html">Lookback</a></li>
+                <li><a href="a_mmbranch.html">Mail Magazine</a></li>
+              </ul>
+            </li>
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Common<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="c_csvdf.html">CSV Define</a></li>
+                <li><a href="c_xl2tb.html">Tablize</a></li>
+                <li><a href="c_tb2dl.html">Table to DL</a></li>
+                <li><a href="c_bmlib.html">Bookmarklet</a></li>
+                <li class="divider"></li>
+                <li><a href="c_start.html">Introduction</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-right">
+            <li>
+              <div class="checkbox">
+                <label><input type="checkbox" id="displayProcedure">説明を表示する</label>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <!-- /navigation -->
+
+  </div>
+</nav><div id="info"></div>
+
+<section id="tb2dl">
+  <p class="procedure well">&lt;table&gt;タグを&lt;dl&gt;タグに変換します。</p>
+  <h1 class="procedure"><span class="circle-text label-primary">1</span> &lt;table&gt;タグを含んだソースを貼り付ける</h1>
+  <form name="conv">
+    <textarea name="before" class="form-control" rows="6" placeholder="tableタグ"></textarea>
+    <div class="container">
+      <div class="col-xs-4">
+        <button type="button" class="btn btn-default btn-lg btn-block" style="margin: 10px 0" onclick="tool.refreshOrder()"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 更新</button>
+      </div>
+      <div class="col-xs-8">
+        <button type="button" class="btn btn-primary btn-lg btn-block" style="margin: 10px 0" onclick="convertOrder()"><span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span> Convert &amp; Copy</button>
+      </div>
+    </div>
+
+
+  <div class="row">
+    <div class="col-xs-5">
+      <div id="output" class="panel panel-default center-block" style="visibility: hidden; opacity: 0;">
+        <div class="panel-heading">簡易プレビュー</div>
+        <div class="panel-body">
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-7">
+      <h1 class="procedure"><span class="circle-text label-primary">2</span> 確認してソースを利用する</h1>
+      <textarea name="after" class="form-control" rows="6" placeholder="DLタグ"></textarea>
+    </div>
+  </div>
+  </form>
+  <div class="well">
+    <p>&lt;table&gt; タグを &lt;dl&gt; タグに変換します。<br>
+    行の1番目の要素を &lt;dt&gt; として、それ以降を &lt;dd&gt; として解釈します。</p>
+    <hr>
+    <p><strong>変換 + コピー : </strong>Tableソースにフォーカスして Shift + Enter</p>
+    <p><strong>プレビューを更新する : </strong>DLソースにフォーカスして Shift + Enter</p>
+  </div>
+</section>
+<hr>
+<div class="row">
+  <div class="text-center text-muted">
+    Copyright &copy; 2017 &middot; Released under the MIT license &middot; Kaoru Yoshinaga
+  </div>
+</div>
+<hr>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script type="text/javascript" src="settings.txt"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript">
+  function outputFilter(str) {
+    return str.replace(/src="\/fp\/img\/dummy.gif"/g, 'src="img/dummy.gif"')
+      .replace(/ (href|src)="\//g, ' $1="http://preview.mobile.a.example.com/');
+  }
+  var tool = new ConverterPage({ outputFilter: outputFilter });
+</script>
+</body>
+</html>

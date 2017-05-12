@@ -1,0 +1,191 @@
+a {
+  color: #1d3994;
+}
+
+a:visited {
+  color: #1d3994;
+}
+
+hr {
+  border: 1px solid #be2335;
+}
+
+#header hr {
+  border: 1px solid #eb003c;
+}
+
+.hd_02 {
+  text-align: left;
+  background: #000000;
+  color: #ffffff;
+}
+table {
+  background: #eeeeee;
+}
+
+li {
+  list-style-type: none;
+}
+ul {
+  padding-left: 0;
+}
+.ta_r {
+  text-align: right;
+}
+.ta_l {
+  text-align: left;
+}
+.ta_c {
+  text-align: center;
+}
+.fz_s {
+  font-size: small;
+}
+.fz_xs {
+  font-size: x-small;
+}
+.fw_b {
+  font-weight: bold;
+}
+#container {
+  background: #ffffff;
+}
+.cont_menu hr {
+  color: #eeeeee;
+}
+
+.marquee {
+  display: -wap-marquee;
+  -wap-marquee-loop: infinite;
+  background-color: #000000;
+  color: #ffffff;
+  font-size: small;
+}
+
+.info {
+  color: #ff0000;
+}
+.border {
+  border: solid 1px #666666;
+  background: #ffffff;
+  color: #000000;
+}
+.border_bg {
+  border: solid 1px #666666;
+  background: #c0c0c0;
+  color: #000000;
+}
+.border01 {
+  border: solid 1px #000000;
+  font-size: x-small;
+  background: #c0c0c0;
+  color: #ffffff;
+}
+.border02 {
+  border: solid 1px #000000;
+  font-size: x-small;
+  background: #ffffff;
+  color: #000000;
+}
+.bgcolor {
+  font-size: x-small;
+  background: #c0c0c0;
+  color: #ffffff;
+}
+.bgcolor_dg {
+  font-size: x-small;
+  background: #696969;
+  color: #ffffff;
+}
+.border_r {
+  border-right: solid 1px #000000;
+}
+.team_name {
+  color: #ff0000;
+}
+.team_name_vs01 {
+  color: #333333;
+}
+.member_name {
+  color: #333333;
+}
+hr {
+  color: #333333;
+}
+th {
+  font-weight: normal;
+}
+
+/* ディレクトリ未定 */
+.date {
+  color: #333333;
+}
+.icon {
+  color: #000000;
+}
+.cat_icon {
+  color: #000000;
+}
+.ttl {
+  color: #333333;
+}
+.txt {
+  color: #000000;
+}
+.status {
+  color: #333333;
+}
+.mb_status {
+  color: #ff0000;
+}
+.duration {
+  color: #000000;
+}
+
+/**************
+
+追加要素
+
+**************/
+.hd_03 {
+  text-align: left;
+  background: #888888;
+  color: #ffffff;
+}
+.hd_03c {
+  text-align: center;
+  background: #888888;
+  color: #ffffff;
+}
+.hd_04 {
+  text-align: left;
+  background: #cccccc;
+  color: #000000;
+  font-size: small;
+}
+
+.icon01 {
+  color: #000000;
+}
+
+.annot01 {
+  font-size: small;
+  color: #888888;
+}
+
+/* 下部 */
+.footer {
+  text-align: right;
+  font-size: small;
+}
+.footer_menu {
+  background-color: #999999;
+  font-size: small;
+}
+.footer_menu a {
+  color: #ffffff;
+}
+.copy {
+  text-align: center;
+  font-size: x-small;
+}

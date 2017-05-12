@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-ML Process</title>
+  <link rel="icon" type="image/png" href="img/favicon.png">
+  <link href="css/bootstrap.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <link href="css/lhtmlmm.css" rel="stylesheet">
+  <script type="text/javascript">
+    function convertMailmagazine(str) {
+      let vol = 32,
+        date = "",
+        lead = "",
+        article = "";
+      let sources = [],
+        titles = [],
+        block = [];
+      const notFound = ['not found', null, null, null];
+      let manuscripts = [];
+
+      tool.settings = Module.cloneAssoc(settingsTemplate.team_aMl);
+
+      // block.pageHeader ページ用ヘッダー
+      manuscripts = [Convert.proof(str)];
+      tool.getItems(manuscripts);
+      block.pageHeader = tool.getTemplateReplace('pageHeader');
+
+      // block.mailHeader メール用ヘッダー
+      block.mailHeader = tool.getTemplateReplace('mailHeader');
+
+      // block.headline ヘッドライン
+      block.headline = tool.getTemplateReplace('headlineHeader')
+      tool.imgCount = 0;
+      manuscripts = (str.match(/(?:\-\+){8,}[\s\S]*?(?=-{8,}\s+◇HOT TOPICS)/) || notFound)[0];
+      manuscripts = manuscripts.split(/(?:\-\+){8,}\s+(?=.*?\s+(?:\-\+){8,})/);
+      manuscripts.shift();
+      for (let _headline of manuscripts) {
+        tool.getItems(_headline);
+        block.headline += tool.getTemplateReplace('headline');
+      }
+      block.headline += tool.getTemplateReplace('headlineFooter')
+
+      tool.positionClass = 0;
+
+      // block.topics トピックス
+      block.topics = tool.getTemplateReplace('topicsHeader')
+      tool.imgCount = 0;
+      manuscripts = (str.match(new RegExp(tool.settings.blockDefine.topics)) || notFound)[1];
+      manuscripts = manuscripts.split(new RegExp(tool.settings.blockDefine.topicsDlm));
+      for (let _topics of manuscripts) {
+        tool.getItems(_topics);
+        block.topics += tool.getTemplateReplace('topics');
+      }
+      block.topics += tool.getTemplateReplace('topicsFooter')
+
+      // block.pr PR
+      block.pr = "";
+      tool.imgCount = 0;
+      manuscripts = (str.match(new RegExp(tool.settings.blockDefine.pr)) || notFound)[1];
+      manuscripts = manuscripts.split(new RegExp(tool.settings.blockDefine.prDlm));
+      for (let _pr of manuscripts) {
+        tool.getItems(_pr);
+        if (_pr.match(/\S/)) {
+          if (_pr.match(new RegExp(tool.settings.blockDefine.pr_alt_required))) {
+            // 特別PR
+            block.pr += tool.getTemplateReplace('pr_alt');
+          } else {
+            // 通常PR
+            block.pr += tool.getTemplateReplace('pr');
+          }
+        }
+      }
+      block.pr += tool.getTemplateReplace('prFooter')
+
+      // block.pageFooter ページ用フッター
+      block.pageFooter = tool.getTemplateParts('pageFooter');
+
+      // block.mailFooter メール用フッターpage
+      block.mailFooter = tool.getTemplateParts('mailFooter');
+
+      // Page 本文
+      sources.page = block.pageHeader + block.headline + block.topics + block.pr + block.pageFooter;
+      sources.page = sources.page.replace(/@@url\((.*?)\)@@/g, '$1');
+
+      // PC-A タイトル
+      titles.mlWeb = (str.match(/title:\s*(.*?)(?=\n)/) || notFound)[1];
+      // PC-A 本文
+      sources.mlWeb = block.mailHeader + block.headline + block.topics + block.pr + block.mailFooter;
+
+      // Mobile-A タイトル
+      titles.mlMobile = Convert.hankaku(titles.mlWeb);
+      // Mobile-A 本文
+      sources.mlMobile = Convert.hankaku(str
+      .replace(/DUMMY\s*(.*?)(?=\n)\s+/, '')
+      .replace(/DUMMY @@url/g, '･ｽﾏｰﾄﾌｫﾝ @@url')
+      .replace(/https?:\/\/www\.a\.example\.com/g, 'http://sp.a.example.com')
+      .replace(/(?:_\/){6,}\s*?DUMMY[\s\S]*?(?:_\/){6,}/, tool.getTemplateParts('mobileHeader')));
+
+      var mapRp = {
+        '（': '(',
+        '）': ')',
+      };
+      var reg = new RegExp('(' + Object.keys(mapRp).join('|') + ')', 'g');
+
+      sources.page = sources.page
+        .replace(/\t|  /g, '')
+        .replace(reg, function(match) {
+          return mapRp[match];
+        });
+
+      tool.after.value = sources.page;
+      tool.afterWeb.value = sources.mlWeb;
+      tool.afterTitleWeb.value = titles.mlWeb;
+      tool.afterMobile.value = sources.mlMobile;
+      tool.afterTitleMobile.value = titles.mlMobile;
+
+      return sources.page;
+    };
+
+    function removeHeader(str) {
+      return str
+        .replace(/^[\s\S]*?<body>/g, '')
+        .replace(/\n<\/body>\n<\/html>/g, '')
+        //HTMLメルマガへの影響がなければ、インデントの調整
+        .replace(/[ \t]{2}/g, ' ');
+    }
+
+    function addClockcount() {
+      alert(pageFoot);
+      return str
+        .replace(/href="http(.*?)mmag"/g, 'href="@@url(http$1mmag)@@"');
+    }
+
+    //Convert Order
+    function convertOrder() {
+      var str = tool.before.value;
+      if (str) {
+        str = convertMailmagazine(str);
+        tool.finish('ページ用・メルマガ用ソースを作成しました。', str);
+      } else {
+        tool.info('テキストメルマガの原稿を入力してください。');
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+        <span class="navbar-brand">A-MMBRANCH</span>
+      </div>
+      <!-- navigation -->
+      <div class="collapse navbar-collapse" id="navbar">
+        <ul class="nav navbar-nav">
+          <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamB<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="b_pcmut.html">PC Markup</a></li>
+              <li><a href="b_pc2fp.html">FP Convert</a></li>
+              <li><a href="b_project.html">Project Automation</a></li>
+              <li><a href="b_results.html">Game Result</a></li>
+              <li><a href="b_calendar.html">Store Calendar</a></li>
+            </ul>
+          </li>
+
+          <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamA<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="a_pcmut.html">PC Markup</a></li>
+              <li><a href="a_pc2fp.html">FP Convert</a></li>
+              <li class="divider"></li>
+              <li><a href="a_4lbtb.html">Lookback</a></li>
+              <li><a href="a_mmbranch.html">Mail Magazine</a></li>
+            </ul>
+          </li>
+          <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Common<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="c_csvdf.html">CSV Define</a></li>
+              <li><a href="c_xl2tb.html">Tablize</a></li>
+              <li><a href="c_tb2dl.html">Table to DL</a></li>
+              <li><a href="c_bmlib.html">Bookmarklet</a></li>
+              <li class="divider"></li>
+              <li><a href="c_start.html">Introduction</a></li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="nav navbar-right">
+          <li>
+            <div class="checkbox">
+              <label><input type="checkbox" id="displayProcedure">説明を表示する</label>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <!-- /navigation -->
+
+    </div>
+  </nav><div id="info"></div>
+
+
+  <section id="mmbranch">
+    <h1 class="procedure"><span class="circle-text label-danger">1</span> テキストメルマガの原稿を用意する</h1>
+    <h1 class="procedure"><span class="circle-text label-danger">2</span> テキストメルマガの原稿を貼り付ける</h1>
+    <form name="conv">
+      <textarea name="before" class="form-control" rows="6" placeholder="入力">メルマガ内容</textarea>
+      <button type="button" class="btn btn-danger btn-Ag btn-block" style="margin: 10px 0" onclick="convertOrder()"><span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span> Generate</button>
+
+      <div class="row">
+        <div class="col-md-7">
+          <h1 class="procedure"><span class="circle-text label-danger">3</span> 簡易的に内容を確認する</h1>
+          <div id="output" class="panel panel-default center-block" style="visibility: hidden; opacity: 0;">
+            <div class="panel-heading">簡易プレビュー</div>
+            <div class="panel-body">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div id="replaceLogArea"></div>
+          <h2>メルマガページ</h2>
+          <textarea name="after" class="form-control" rows="6" placeholder="本文"></textarea>
+          <h2>WebL本文</h2>
+          <input type="text" name="afterTitleWeb" class="form-control" placeholder="メールタイトル">
+          <textarea name="afterWeb" class="form-control" rows="6" placeholder="本文"></textarea>
+          <h2>MobileL本文</h2>
+          <input type="text" name="afterTitleMobile" class="form-control" placeholder="メールタイトル">
+          <textarea name="afterMobile" class="form-control" rows="6" placeholder="本文"></textarea>
+        </div>
+      </div>
+    </form>
+    <div class="well">
+      <p>Convert + Auto Copy : PC版ソースにフォーカスして Enter</p>
+      Preview Refresh: FP版にフォーカスして Enter
+    </div>
+  </section>
+  <hr>
+  <div class="row">
+    <div class="text-center text-muted">
+      Copyright &copy; 2017 &middot; Released under the MIT license &middot; Kaoru Yoshinaga
+    </div>
+  </div>
+  <hr>
+  <script src="js/jquery-1.11.3.min.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script type="text/javascript" src="settings.txt"></script>
+  <script type="text/javascript" src="project/team_a_mailmagazine.txt"></script>
+  <script type="text/javascript" src="js/common.js"></script>
+  <script type="text/javascript">
+    function outputFilter(str) {
+      return str.replace(/src="\/fp\/img\/dummy.gif"/g, 'src="img/dummy.gif"')
+      .replace(/ (href|src)="\//g, ' $1="http://preview.mobile.a.example.com/')
+      .replace(/(<img class="topicsImg01" src="[^"]*?\/([^/]*?\.(?:jpg|png))"[^>]*?)>/g, '$1 onerror="tool.imgNotfound(this, \'$2\')">');
+    }
+    var tool = new ConverterPageMl({
+      teamId: 'b',
+      outputFilter: outputFilter
+    });
+
+  </script>
+</body>
+
+</html>

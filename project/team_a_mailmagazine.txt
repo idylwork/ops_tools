@@ -1,0 +1,123 @@
+if (typeof settingsTemplate === 'undefined') { var settingsTemplate = []; }
+
+settingsTemplate.team_aMl = {
+  /**
+   * チームAメルマガ
+   */
+
+  delimiter: '-+-+-+-+-+-+-+-+-+\n\n',
+
+  template: {
+
+  /** ページヘッダー */
+  pageHeader: `
+    <div>Vol.{:vol} {:date}</div>
+    <div>{:date_url}.html</div>
+  `, //template.pageHeader
+  headlineHeader: `
+    <div class="{:position}">
+  `, //template.pageHeader
+  headline: `
+    <div>{:headline_url}"</div>
+    <div>{:headline_heading}</div>
+    <div>{:headline_text}</div>
+  `, //template.headline
+  headlineFooter: `
+    <div>FOOTER</div>
+  `, //template.headlineFooter
+  topicsHeader: `
+    <div>{:position} {:topics_url} {:topics_heading}</div>
+  `, //template.topics
+  topicsFooter: `
+    <div>FOOTER</div>
+  `, //template.topicsFooter
+  pr: `
+    <div>{:pr_url} {:pr_heading} {:pr_text}</div>
+  `, //template.pr
+  pr_alt: `
+    <div>{:pr_alt_heading1} {:pr_url1} {:pr_alt_link} {:pr_alt_heading2} {:pr_url2}</div>
+  `, //template.pr_alt
+  prFooter: `
+    <div>FOOTER</div>
+  `, //template.prFooter
+  pageFooter: `
+    <div>FOOTER</div>
+  `,
+mailHeader: `
+    <html lang="ja">
+    <head>
+    <title>{:title}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+
+    /*----------------------------------------------------
+    reset
+    ----------------------------------------------------*/
+    html, body, div, span, applet, object, iframe,
+    h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+    a, abbr, acronym, address, big, cite, code,
+    del, dfn, em, img, ins, kbd, q, s, samp,
+    small, strike, strong, sub, sup, tt, var,
+    b, u, i, center,
+    dl, dt, dd, ol, ul, li,
+    fieldset, form, label, legend,
+    table, caption, tbody, tfoot, thead, tr, th, td,
+    article, aside, canvas, details, embed,
+    figure, figcaption, footer, header, hgroup,
+    menu, nav, output, ruby, section, summary,
+    time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    text-decoration:none;
+    }
+    </style>
+    </head>
+    <body>
+      メルマガ内容
+    </body>
+    </html>
+  `,
+
+  mobileHeader: `
+    モバイルヘッダー
+  `,
+
+  }, //template: ここまで
+
+  /**
+   * 項目定義
+   * プレースホルダーの名前とメール原稿の読み取り条件
+   * 正規表現(\は\\にエスケープ)で指定し、取得したい文字列を(グループ化)する
+   * (グループ1が結果として返される)
+   */
+  itemDefine: {
+    title: 'title:\\s*?(.*?)【L☆TIMES Vol\\.\\d+】',
+    vol: 'title:\\s*?.*?【L☆TIMES Vol\\.(\\d+)】',
+    date: '\\*HEADLINE\\*\\s*(\\d{4}\\.\\d{2}\\.\\d{2})\\s',
+    lead: '\\*HEADLINE\\*\\s*.*?\\n={8,}[\\s\\S]*?={8,}\\n([\\s\\S]*?)\\s+-\\+-\\+-\\+-\\+',
+    headline_heading: '\\[[1-9]\\](.*?)\\s+(?:\\-\\+){8,}',
+    headline_text: '(?:\\-\\+){8,}\\s+([\\s\\S]*)',
+    headline_url: '・PC\\/スマホ @@url\\((.*?)\\)@@\\s',
+    topics_heading: '◆(.*)',
+    topics_url: '・PC\\/スマホ @@url\\((.*?)\\)@@(?:\\s|$)',
+    pr_heading: '[◆◇](.*)',
+    pr_text: '[◆◇].*\\n\\n([\\s\\S]*?)・PC\\/スマホ @@url',
+    pr_url: '・PC\\/スマホ @@url\\((.*?)\\)@@',
+    pr_alt_heading1: '^\\s*([\\s\\S]*?)\\n.*?\\n\\[URL\\(PC\\)\\]',
+    pr_alt_link: '^\\s*[\\s\\S]*?\\n(.*?)\\n\\[URL\\(PC\\)\\]',
+    pr_alt_url1: '^\\s*[\\s\\S]*?\\n.*?\\n\\[URL\\(PC\\)\\]\\s+(.*)',
+    pr_alt_heading2: '^\\s*[\\s\\S]*?\\n.*?\\n\\[URL\\(PC\\)\\]\\s+.*\\s+([\\s\\S]*?)\\n\\[URL\\(PC\\)\\]',
+    pr_alt_url2: '^\\s*[\\s\\S]*?\\n.*?\\n\\[URL\\(PC\\)\\]\\s+.*\\s+([\\s\\S]*?)\\n\\[URL\\(PC\\)\\]\\s(.*)',
+  },
+  blockDefine: {
+    topics: '-{8,}\\s+◇HOT TOPICS\\s+-{8,}\\s+((?:◆[\\s\\S]*?\\n\\n){1,})',
+    topicsDlm: '\\n\\n(?=◆)',
+    pr: '-{8,}\\s+◇HOT TOPICS\\s+-{8,}\\s+(?:◆[\\s\\S]*?\\n\\n){1,}([\\s\\S]*?)\\s*■□━━━━━━━━━━━━━・・・・・',
+    prDlm: '(?:_\\/|□■|＝){4,}',
+    pr_alt_required: '\\[URL\\(PC\\)\\]',
+  },
+};

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TeamB Training</title>
+  <link rel="icon" type="image/png" href="img/favicon.png">
+  <link href="css/bootstrap.css" rel="stylesheet">
+  <link id="cssPc" href="http://www.b.example.com/dummy.css" rel="stylesheet">
+  <link id="cssSp" href="http://sp.b.example.com/dummy.css" rel="stylesheet" disabled="true">
+  <link id="cssFp" href="http://mobile.b.example.com/dummy.css" rel="stylesheet" disabled="true">
+  <link href="css/style.css" rel="stylesheet">
+  <style type="text/css">
+    nav.navbar {
+      width: 100%;
+      position: fixed;
+      z-index: 100;
+    }
+    html,
+    body,
+    #train,
+    #train > form,
+    #train > form > .row,
+    #train > form > .row > div,
+    #train > form > .row > div > #output,
+    #train > form > .row > div > textarea
+    {
+      height: 100%;
+    }
+    #train {
+      padding: 80px 10px 20px;
+    }
+    #train > form > .row > div > #output {
+      overflow: scroll;
+    }
+    #train > form > .row > div > textarea {
+      resize: none;
+    }
+
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-default invalid-official-css">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+      <span class="navbar-brand">Web研修</span>
+    </div>
+    <!-- navigation -->
+    <div class="collapse navbar-collapse" id="navbar">
+      <ul class="nav navbar-nav">
+        <li><a id="download" href="javascript:;">保存</a></li>
+      </ul>
+      <ul class="nav navbar-right">
+        <li>
+          <div class="checkbox hidden">
+            <input type="checkbox" id="displayProcedure">
+          </div>
+        </li>
+      </ul>
+    </div>
+    <!-- /navigation -->
+  </div>
+</nav><div id="info"></div>
+
+<section id="train">
+  <form name="conv">
+    <textarea name="before" class="form-control hidden" rows="6" placeholder=""></textarea>
+    <div class="checkbox hidden"><input type="checkbox" id="displayProcedure"></div>
+
+
+    <div class="row">
+      <div class="col-xs-5">
+        <div id="output" class="panel panel-default center-block">
+          <div class="panel-heading">
+            <div class="form-group" style="margin-bottom: 0;">
+              <div class="radio-inline">
+                表示デバイス
+              </div>
+              <div class="radio-inline">
+                <input type="radio" value="cssPc" name="cssSelect" id="pc" checked="checked">
+                <label for="pc">PC</label>
+              </div>
+              <div class="radio-inline">
+                <input type="radio" value="cssSp" name="cssSelect" id="sp">
+                <label for="sp">SP</label>
+              </div>
+              <div class="radio-inline">
+                <input type="radio" value="cssFp" name="cssSelect" id="fp">
+                <label for="fp">FP</label>
+              </div>
+            </div>
+          </div>
+          <div class="panel-body">
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-7">
+        <textarea name="after" class="form-control" rows="20" placeholder="ここにHTMLソースを記述してください"></textarea>
+      </div>
+    </div>
+  </form>
+  <div id="replaceLogArea"></div>
+</section>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script type="text/javascript" src="settings.txt"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript">
+  function outputFilter(str) {
+    log(tool.cssMode);
+    if (tool.cssMode === 'cssPc') {
+      str = '<section class="pcOnly">' + str + '</section>';
+    }
+    return str.replace(/src="\/fp\/img\/dummy.gif"/g, 'src="img/dummy.gif"')
+    .replace(/ (href|src)="\//g, ' $1="http://preview.mobile.b.example.com/')
+    .replace(/<img .*?xh_(.*?).jpg".*?>/g, '<div class="dummy-img">xh_$1.jpg</div>');
+  }
+  var tool = new ConverterPageTrain({ outputFilter: outputFilter });
+
+  //Convert Order
+  function convertOrder() {}
+
+  function exportFile() {
+    let source = document.conv.after.value;
+    const csvFileName = 'training.html';
+
+    let str_array = Encoding.stringToCode(source.replace(/\r\n|\r|\n/g, '\r\n'));
+    log(tool.csv.replace(/\r\n|\r|\n/g, '\r\n'));
+    let sjis_array = Encoding.convert(str_array, "SJIS", "UNICODE");
+    let uint8_array = new Uint8Array(sjis_array);
+    let blob = new Blob([uint8_array], { type: "text/csv;" });
+
+    if (window.navigator.msSaveBlob) {
+      window.navigator.msSaveBlob(blob, csvFileName);
+      // msSaveOrOpenBlobの場合はファイルを保存せずに開ける
+      window.navigator.msSaveOrOpenBlob(blob, csvFileName);
+    } else {
+      document.getElementById("download").href = window.URL.createObjectURL(blob);
+    }
+  }
+
+</script>
+</body>
+</html>

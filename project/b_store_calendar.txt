@@ -1,0 +1,98 @@
+if (typeof settingsTemplate === 'undefined') { var settingsTemplate = []; }
+
+settingsTemplate.storeCalendar = {
+  /**
+   * CALENDAR チームBストア営業時間カレンダー生成
+   */
+
+  template: {
+
+  /** テンプレート */
+  header: `
+    <table class="web-schedule-table">
+      <colgroup><col><col><col><col><col><col><col></colgroup>
+      <thead>
+        <tr>
+          <th>月</th>
+          <th>火</th>
+          <th>水</th>
+          <th>木</th>
+          <th>金</th>
+          <th><span>土</span></th>
+          <th><span>日</span></th>
+        </tr>
+      </thead>
+      <tbody>
+  `,
+  trStart: `
+        <tr>
+  `,
+  otherMonth: `
+          <td class="web-otherMonth">{:month}/{:date}</td>
+  `,
+  date: `
+          <td>
+            <p class="web-schedule-date">{:date}<span>{:notes}</span></p>
+            <ul>
+              <li class="web-hourOpen{:open_head}">{:open}</li>
+              <li class="web-open-time-{:close_head}">{:close}</li>
+            </ul>
+          </td>
+  `,
+  holiday: `
+          <td>
+            <p class="web-schedule-date web-holiday">{:date}<span>{:notes}</span></p>
+            <ul>
+              <li class="web-hourOpen{:open_head}">{:open}</li>
+              <li class="web-open-time-{:close_head}">{:close}</li>
+            </ul>
+          </td>
+  `,
+  closeDay: `
+          <td class="web-closeDay"><p class="web-schedule-date">{:date}</p><p class="web-close01">休業日</p></td>
+  `,
+  local: `
+          <td class="web-noEventDay">
+            <p class="web-schedule-date">{:date}</p>
+          </td>
+  `,
+  localEvent: `
+          <td>
+            <p class="web-schedule-date">{:date}</p>
+            <p class="text"><a href="#{:event_id}_01">{:event}</a></p>
+          </td>
+  `,
+  localEventRed: `
+          <td>
+          <p class="web-schedule-date web-text-red">{:date}</p>
+          <p class="text"><a href="#{:event_id}_01">{:event}</a></p>
+          </td>
+  `,
+  trClose: `
+        </tr>
+  `,
+  footer: `
+      </tbody>
+    </table>
+  `,
+  fpTerm: `
+    <span class="icon01">■</span>{:dates}<br>
+    {:term}<br>
+    <br>
+  `,
+  notesHeader: `
+    <div class="web-calendarMemoBlock01">
+      <ul class="web-calendarMemoList01">
+  `,
+  notesList: `
+        <li>※{:notes_num}・・・{:notes}</li>
+  `,
+  notesFooter: `
+      </ul>
+    </div>
+  `,
+
+  dateTag: '<p class="web-schedule-date[^\"]*?">',
+  notesTag: '<span>',
+  }
+};

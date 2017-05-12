@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>B-Project Automation</title>
+    <link rel="icon" type="image/png" href="img/favicon.png">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bparts.css">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+          <span class="navbar-brand">B-PROJECT</span>
+        </div>
+        <!-- navigation -->
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="nav navbar-nav">
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamB<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="b_pcmut.html">PC Markup</a></li>
+                <li><a href="b_pc2fp.html">FP Convert</a></li>
+                <li><a href="b_project.html">Project Automation</a></li>
+                <li><a href="b_results.html">Game Result</a></li>
+                <li><a href="b_calendar.html">Store Calendar</a></li>
+              </ul>
+            </li>
+
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamA<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="a_pcmut.html">PC Markup</a></li>
+                <li><a href="a_pc2fp.html">FP Convert</a></li>
+                <li class="divider"></li>
+                <li><a href="a_4lbtb.html">Lookback</a></li>
+                <li><a href="a_mmbranch.html">Mail Magazine</a></li>
+              </ul>
+            </li>
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Common<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="c_csvdf.html">CSV Define</a></li>
+                <li><a href="c_xl2tb.html">Tablize</a></li>
+                <li><a href="c_tb2dl.html">Table to DL</a></li>
+                <li><a href="c_bmlib.html">Bookmarklet</a></li>
+                <li class="divider"></li>
+                <li><a href="c_start.html">Introduction</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-right">
+            <li>
+              <div class="checkbox">
+                <label><input type="checkbox" id="displayProcedure">説明を表示する</label>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <!-- /navigation -->
+
+      </div>
+    </nav><div id="info"></div>
+
+    <section id="proja">
+      <p class="procedure well">チームBの各運用案件を半自動的に対応するためのツールです。</p>
+      <form name="conv">
+        <h1 class="procedure"><span class="circle-text label-success">1</span> 日付と案件モードを設定する</h1>
+        <div class="container">
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label>ニュース日付</label>
+              <input type="date" name="date" class="form-control">
+            </div>
+          </div>
+          <div class="col-xs-5">
+            <div class="form-group">
+              <label>案件モード</label>
+              <select class="form-control" id="projectMode" name="projectMode">
+                <option value="media" selected="selected">メディア掲載情報</option>
+                <option value="localCalendar">地域カレンダー更新</option>
+                <option value="goodsNews">グッズニュース</option>
+                <option value="contentsNews">配信コンテンツニュース</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-xs-3">
+            <div class="checkbox">
+              <label><input type="checkbox" name="htmlOutputMode" value="">HTMLで出力する</label>
+            </div>
+          </div>
+        </div>
+
+        <h1 class="procedure"><span class="circle-text label-success">2</span> 原稿を入力して変換</h1>
+        <p class="procedure procedure-switch procedure-media">原稿となるメールの本文から区切り線(===)から内側をコピーして貼り付ける。</p>
+        <textarea name="before" class="form-control" rows="6" placeholder="原稿"></textarea>
+
+        <button type="button" class="btn btn-success btn-lg btn-block" style="margin: 10px 0" onclick="convertOrder()"><span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span> Convert</button>
+
+        <h1 class="procedure"><span class="circle-text label-success">3</span> 内容が違っていた場合には個別に修正</h1>
+        <div id="itemsEditor" class="clearfix"></div>
+
+        <div class="row procedure procedure-switch procedure-media">
+          <div class="col-sm-4">
+            <div class="text-success">date</div><small>メディアの日付</small><br>
+            <div class="text-success">date_csv</div><small>メディア情報で使用する形式の日付</small><br>
+            <div class="text-success">player</div><small>ニュースの見出しで使用する選手名</small><br>
+            <div class="text-success">player_name</div><small>メディア情報で使用する選手名</small><br>
+          </div>
+          <div class="col-sm-4">
+            <div class="text-success">player_number</div><small>背番号 (取得できない場合には/project/player_number.txtを公式サイトの最新情報に変更)</small><br>
+            <div class="text-success">media</div><small>メディア情報に使用するメディア名</small><br>
+            <div class="text-success">publisher</div><small>メディア情報に使用する出版社・放送局名</small><br>
+          </div>
+          <div class="col-sm-4">
+            <div class="text-success">media_news</div><small>ニュースのメディア名に使用する文言</small><br>
+            <div class="text-success">url</div><small>出版社・放送局のURL (リンク有無の判別にも使用)</small><br>
+            <div class="text-success">info</div><small>説明文</small><br>
+            <div class="text-success">airtime</div><small>メディア情報に使用する放映時間</small><br>
+          </div>
+        </div>
+
+        <button type="button" id="itemsEditorButton" class="btn btn-success btn-md btn-block hidden" onclick="tool.refreshOrder()"><span class="glyphicon glyphicon-chevron-down"></span> 修正フォームの内容で再設定</button>
+
+        <template id="itemsEditorTemplate">
+          <div class="col-sm-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                loop見本
+              </div>
+              <div class="panel-body">
+                <form class="form-horizontal" data-role="itemsEditor">
+                </form>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <template id="itemsEditorFormTemplate">
+          <div class="form-group form-group-sm">
+            <label class="col-xs-2 control-label" for="InputEmail"></label>
+            <div class="col-xs-10">
+              <textarea id="" class="form-control" placeholder="取得できませんでした"></textarea>
+            </div>
+          </div>
+        </template>
+
+        <div class="row">
+          <div class="col-sm-5">
+
+            <div id="output" class="panel panel-default center-block" style="visibility: hidden; opacity: 0;">
+              <div class="panel-heading">簡易プレビュー</div>
+              <div class="panel-body">
+              </div>
+            </div>
+
+          </div>
+          <div class="col-sm-7">
+            <div id="replaceLogArea"></div>
+
+            <div class="well">
+              <h1 class="procedure"><span class="circle-text label-success">4</span> CMSへの入力</h1>
+              <div id="outputForms">
+                <div class="form-group">
+                  <label>更新コード</label>
+                  <div class="input-group">
+                    <input type="text" name="after" class="form-control" disabled="disabled">
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" disabled="disabled">コピー</button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <template id="outputTemplateJson">
+                <div class="form-group">
+                  <label>更新コード</label>
+                  <div class="input-group">
+                    <input type="text" name="after" class="form-control">
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" onclick="tool.copy(this.parentNode.previousElementSibling.value)">コピー</button>
+                    </span>
+                  </div>
+                </div>
+              </template>
+
+              <template id="outputTemplateText">
+                <div class="form-group">
+                  <label>HTMLソース</label>
+                  <div class="input-group">
+                    <textarea name="after" class="form-control"></textarea>
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" onclick="tool.copy(this.parentNode.previousElementSibling.value)">コピー</button>
+                    </span>
+                  </div>
+                </div>
+              </template>
+
+              <template id="outputTemplateCsv">
+                <div class="form-group">
+                  <label>インポート用CSV</label>
+                  <div class="input-group">
+                    <input type="text" name="after" class="form-control">
+                    <span class="input-group-btn">
+                      <a id="download" href="#" download="import.csv" onclick="exportCsv()">
+                        <button type="button" class="btn btn-default">保存</button>
+                      </a>
+                    </span>
+                  </div>
+                </div>
+              </template>
+
+            </div>
+
+            <div class="procedure procedure-switch procedure-media">
+              <h2>最新メディア情報のニュースを追加</h2>
+              <ol>
+                <li>CMSコンテンツ編集からニュースを新規作成する。</li>
+                <li>ニュース編集画面で本文入力フォームを2つ作成する。</li>
+                <li>
+                  ブックマークバーから『更新コード入力』を実行<br>
+                  ブックマークバーが表示されていない場合には、CMSを開いているブラウザの上部を右クリックし、タブで表示 をオンにする。(Google Chromeの場合)
+                </li>
+                <li>ニュースを保存して閉じる</li>
+              </ol>
+              <h2>CSV更新</h2>
+              <ol>
+                <li>保存ボタンを押して、インポート用のCSVファイルを保存します。</li>
+                <li>CMSコンテンツ編集からメディア出演情報を開き、CSVインポートを選択します。</li>
+                <li>先ほど保存したCSVファイルを選択し、『CSVインポート』を選択します。</li>
+                <li>10秒ほど反映を待ってから再読み込みし、内容を確認する</li>
+              </ol>
+              <h2>確認</h2>
+              <ol>
+                <li>サイト上で<a href="https://preview.www.b.example.com/dummy/">ニュース</a>と<a href="https://preview.www.b.example.com/dummy/">メディア情報</a>を確認します。</li>
+                <li>CMSコンテンツ編集からメディア出演情報を開き、CSVインポートを選択します。</li>
+                <li>先ほど保存したCSVファイルを選択し、『CSVインポート』を選択します。</li>
+                <li>10秒ほど反映を待ってから再読み込みし、内容を確認する</li>
+              </ol>
+            </div>
+            <!--
+            <div class="procedure">
+              <h2>更新コード(ニュース)の場合</h2>
+              <ol>
+                <li>CMSからニュースを新規作成する。</li>
+                <li>ニュース編集画面で本文入力フォームを2つ作成する。</li>
+                <li>
+                  ブックマークバーから『更新コード入力』を実行<br>
+                </li>
+                <li>ニュースを保存して閉じる</li>
+              </ol>
+              <h2>文字列の場合</h2>
+              <ul>
+                <li>コピーボタンでソースをコピーできるので、所定の場所に貼り付けてください。</li>
+              </ul>
+              <h2>CSV更新の場合</h2>
+              <ol>
+                <li>保存ボタンを押して、インポート用のCSVファイルを保存します。</li>
+                <li>コンテンツ編集の各カテゴリ内でCSVインポートを選択します。</li>
+                <li>先ほど保存したCSVファイルを選択し、『CSVインポート』を選択します。</li>
+                <li>10秒ほど反映を待ってから再読み込みし、内容を確認する</li>
+              </ol>
+            </div>
+            -->
+          </div>
+        </div>
+      </form>
+
+      <div class="well">
+        <p><a href="javascript:if(confirm('記述例を表示しますか？(原稿が入力されていた場合は上書きされます。)')){tool.before.value = `======================\n【放映日・発売日】\n12月23日(土・祝)\n\n【出演者】\n島孝明投手\n\n【メディア名】\n毎日新聞 千葉版朝刊\n\n【出演情報】\n月1回の『ルーキー日記』の最終回が掲載されます。\n\n======================\n`;convertOrder()}"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 見本を表示する</a></p>
+        <p><strong>変換 + コピー : </strong>PC版ソースにフォーカスして Shift + Enter</p>
+        <p><strong>プレビューを更新する : </strong>FP版にフォーカスして Shift + Enter</p>
+        <strong>&lt;dt&gt; の変換方式を変える : </strong>DLのスタイル を変更してから変換する
+
+        <h3>ブラウザに更新コードのブックマークレットが登録されていない場合</h3>
+        <div class="bracket">
+          <p>ブックマークバーに更新コード入力のブックマークレットを追加する。</p>
+
+          <a class="btn btn-info btn-lg bookmarklet" style="width: 200px;" href="javascript:var form%3Dwindow.frames%5B0%5D.frames%5B1%5D.EDITOR%3Bif(!form.elements%5B'OpenCmsString.NewsBody_1_.Choice_1_.Easy_2_.BodyTextUpper_1_.0'%5D)%7Balert('本文入力エリアを2つ開いてから実行してください。')%3B%7Delse%7Bcode%3Dwindow.prompt('更新コードをツールからコピーしてください。')%3Bvar items%3DJSON.parse(code)%3Bconsole.table(items)%3Bfor(id in items)%7Bif(items%5Bid%5D%5B'checkbox'%5D)%7Bfor(_num of items%5Bid%5D%5B'checkbox'%5D)%7Bif(!form.elements%5Bitems%5Bid%5D%5B'name'%5D%5D%5B0%5D)%7Bform.elements%5Bitems%5Bid%5D%5B'name'%5D%5D.checked%3Ditems%5Bid%5D%5B'val'%5D%3B%7Delse%7Bform.elements%5Bitems%5Bid%5D%5B'name'%5D%5D%5B_num%5D.checked%3Ditems%5Bid%5D%5B'val'%5D%3B%7D%7D%7Delse%7Bform.elements%5Bitems%5Bid%5D%5B'name'%5D%5D.value%3Ditems%5Bid%5D%5B'val'%5D%3B%7D%7D%7Dvoid(0)%3Bvoid(0);"><span class="glyphicon glyphicon-camera" aria-hidden="true"></span> 更新コード入力</a>
+          <p>このボタンをドラッグしてブックマークバーにドロップする。</p>
+
+          <ul>
+            <li>ブックマークレットとは機能を持ったブックマークのこと。</li>
+            <li>ブックマークバーがない場合には、CMSを開いているブラウザの上部を右クリックし、タブで表示 をオンにする。(Google Chromeの場合)</li>
+            <li>それでも表示されていない場合には Google Chromeの設定 > ブックマーク > ブックマークバーを表示 をオンにする。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <hr>
+    <div class="row">
+      <div class="text-center text-muted">
+        Copyright &copy; 2017 &middot; Released under the MIT license &middot; Kaoru Yoshinaga
+      </div>
+    </div>
+    <hr>
+    <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="settings.txt"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript" src="js/encoding.js"></script>
+    <script type="text/javascript" src="project/media.txt"></script>
+    <script type="text/javascript" src="project/local_calendar.txt"></script>
+    <script type="text/javascript" src="project/player_number.txt"></script>
+    <script type="text/javascript" src="project/_goods_news.txt"></script>
+    <script type="text/javascript">
+
+      //原稿の整形と配列化
+      function convertProcessMedia(manuscriptsOrigin) {
+        let str;
+        tool.settings = Module.cloneAssoc(settingsTemplate.media);
+
+        Convert.escapeControl(manuscriptsOrigin);
+        const regRequired = tool.settings.itemDefine[tool.settings.itemRequired];
+        tool.manuscriptId = 0;
+        tool.recentManuscript = "";
+        tool.items = [];
+        let manuscripts = [];
+
+        // 原稿を分割し、必須条件に合致する項目のみ manuscripts に格納する。
+        manuscriptsOrigin = manuscriptsOrigin.split(new RegExp(tool.settings.delimiter));
+        for (let _fragment of manuscriptsOrigin) {
+          if (_fragment.match(regRequired)) { manuscripts.push(_fragment); }
+        }
+
+        tool.getItems(manuscripts);
+
+        str = setSourceMedia();
+        tool.setItemsEditor();
+
+        return str;
+      }
+
+      function convertProcessLocalCalendar(manuscriptsOrigin) {
+        let str;
+        tool.settings = Module.cloneAssoc(settingsTemplate.localCalendar);
+        log(tool.settings.template);
+
+        Convert.escapeControl(manuscriptsOrigin);
+        const regRequired = tool.settings.itemDefine[tool.settings.itemRequired];
+        tool.manuscriptId = 0;
+        tool.recentManuscript = "";
+        tool.items = [];
+        let manuscripts = [];
+        let sources = [];
+
+        // エクセル形式への対応
+        manuscriptsOrigin = manuscriptsOrigin.replace(/(\t|^)"/g, '$1').replace(/"(\t|$)/g, '$1');
+
+        // 原稿を分割し、必須条件に合致する項目のみ manuscripts に格納する。
+        manuscriptsOrigin = manuscriptsOrigin.split(new RegExp(tool.settings.delimiter));
+        for (let _fragment of manuscriptsOrigin) {
+          if (_fragment.match(regRequired)) { manuscripts.push(_fragment); }
+        }
+        tool.getItems(manuscripts);
+
+        str = setSourceLocalCalendar();
+        tool.setItemsEditor(manuscripts);
+        return str;
+      }
+
+      function convertProcessContentsNews(manuscriptsOrigin) {
+        let str;
+        tool.settings = Module.cloneAssoc(settingsTemplate.goodsNews);
+        Convert.enableTemplate(tool.settings.itemDefine);
+
+        manuscriptsOrigin = manuscriptsOrigin.replace(/\t(?=[\t\n])/g, '');
+        Convert.escapeControl(manuscriptsOrigin);
+        const regRequired = tool.settings.itemDefine[tool.settings.itemRequired];
+        tool.manuscriptId = 0;
+        tool.recentManuscript = "";
+        tool.items = [];
+        let manuscripts = [];
+
+        // 原稿を分割し、必須条件に合致する項目のみ manuscripts に格納する。
+        manuscriptsOrigin = manuscriptsOrigin.split(new RegExp(tool.settings.delimiter));
+        for (let _fragment of manuscriptsOrigin) {
+          if (_fragment.match(regRequired)) { manuscripts.push(_fragment); }
+        }
+
+        log(manuscripts);
+        tool.getItems(manuscripts);
+
+        str = setSourceContentsNews();
+        tool.setItemsEditor();
+
+        return str;
+      }
+
+      function convertProcessGoodsNews(manuscriptsOrigin) {
+        let str;
+        tool.settings = Module.cloneAssoc(settingsTemplate.goodsNews);
+        Convert.enableTemplate(tool.settings.itemDefine);
+
+        manuscriptsOrigin = manuscriptsOrigin.replace(/\t(?=[\t\n])/g, '');
+        Convert.escapeControl(manuscriptsOrigin);
+        const regRequired = tool.settings.itemDefine[tool.settings.itemRequired];
+        tool.manuscriptId = 0;
+        tool.recentManuscript = "";
+        tool.items = [];
+        let manuscripts = [];
+
+        // 原稿を分割し、必須条件に合致する項目のみ manuscripts に格納する。
+        manuscriptsOrigin = manuscriptsOrigin.split(new RegExp(tool.settings.delimiter));
+        for (let _fragment of manuscriptsOrigin) {
+          if (_fragment.match(regRequired)) { manuscripts.push(_fragment); }
+        }
+
+        log(manuscripts);
+        tool.getItems(manuscripts);
+
+        str = setSourceGoodsNews();
+        tool.setItemsEditor();
+
+        return str;
+      }
+
+      /**
+       * ソースを生成してメンバ変数に格納する
+       *
+       * tool.json[0] ニュース用JSON
+       * tool.csv メディア情報
+       */
+      function setSourceMedia() {
+        let str = "", strFp = "", manuscript = "";
+
+        // ヘッダー部分の書き出し
+        tool.csv = tool.getTemplateParts('csvHeader') + '\n';
+
+        // ループ部分の書き出し
+        for (let _manuscriptId in tool.items) {
+          str += tool.getTemplateReplace('loop', _manuscriptId);
+          strFp += tool.getTemplateReplace('loopFp', _manuscriptId);
+          tool.csv += tool.getTemplateReplace('csvLoop', _manuscriptId) + '\n';
+        }
+
+        // フッター部分の書き出し
+        str += tool.getTemplateParts('footer');
+        strFp += tool.getTemplateParts('footerFp');
+
+        tool.json = Module.cloneAssoc(tool.settings.json);
+        //console.table(tool.items);
+        tool.json[0].date.val = tool.date.value.replace(/-/g, '/');
+        tool.json[0].body1.val = str;
+        tool.json[0].body2.val = strFp;
+        tool.json[0] = JSON.stringify(tool.json[0]);
+
+        //出力エリアへの反映
+        document.getElementById('outputForms').innerHTML = null;
+        if (!tool.htmlOutputMode.checked) {
+          tool.setTemplateOutput('json', 'News', tool.json[0]);
+          tool.setTemplateOutput('csv', 'Media', tool.csv);
+        } else {
+          tool.setTemplateOutput('text', 'PC', str);
+          tool.setTemplateOutput('text', 'FP', strFp);
+          tool.setTemplateOutput('csv', 'Media', tool.csv);
+        }
+        document.getElementById('itemsEditorButton').classList.remove('hidden');
+        return str;
+      }
+
+      function setSourceLocalCalendar() {
+        let sources = [], manuscripts = [];
+
+        sources = { pc: "", fp: "" }
+        // ループ部分とニュース記事の書き出し
+        for (let _manuscriptId in tool.items) {
+          sources['pc'] += tool.getTemplateReplace('loop', _manuscriptId) + '\n\n';
+          sources['fp'] += tool.getTemplateReplace('loopFp', _manuscriptId) + '\n\n';
+        }
+        sources['newsPc'] = tool.getTemplateReplace('newsHeader')+ '\n\n' + sources['pc'] + tool.getTemplateReplace('newsFooter');
+        sources['newsFp'] = tool.getTemplateReplace('newsHeaderFp')+ '\n\n' + sources['fp'] + tool.getTemplateReplace('newsFooterFp');
+
+
+        //ニュースJSONの生成
+        tool.json = Module.cloneAssoc(tool.settings.json);
+        tool.json[0].date.val = tool.date.value.replace(/-/g, '/');
+        tool.json[0].body1.val = sources['newsPc'];
+        tool.json[0].body2.val = sources['newsFp'];
+        tool.json[0] = JSON.stringify(tool.json[0]);
+
+        //出力エリアへの反映
+        document.getElementById('outputForms').innerHTML = null;
+        if (!tool.htmlOutputMode.checked) {
+          tool.setTemplateOutput('json', 'News', tool.json[0]);
+          tool.setTemplateOutput('text', 'PagePc', sources['pc']);
+          tool.setTemplateOutput('text', 'PageFp', sources['fp']);
+        } else {
+          tool.setTemplateOutput('text', 'NewsPc', sources['newsPc']);
+          tool.setTemplateOutput('text', 'NewsFp', sources['newsFp']);
+          tool.setTemplateOutput('text', 'PagePc', sources['pc']);
+          tool.setTemplateOutput('text', 'PageFp', sources['fp']);
+        }
+        return sources['newsPc'];
+      }
+
+      function setSourceContentsNews() {
+        let str = "", strFp = "", manuscript = "";
+
+        // ヘッダー部分の書き出し
+        str = tool.getTemplateParts('header') + '\n';
+        strFp = tool.getTemplateParts('headerFp') + '\n';
+
+        // ループ部分の書き出し
+        for (let _manuscriptId in tool.items) {
+          str += tool.getTemplateReplace('loop', _manuscriptId);
+          strFp += tool.getTemplateReplace('loopFp', _manuscriptId);
+        }
+
+        // フッター部分の書き出し
+        str += tool.getTemplateParts('footer');
+        strFp += tool.getTemplateParts('footerFp');
+
+        tool.json = Module.cloneAssoc(tool.settings.json);
+        //console.table(tool.items);
+        tool.json[0].date.val = tool.date.value.replace(/-/g, '/');
+        tool.json[0].body1.val = str;
+        tool.json[0].body2.val = strFp;
+        tool.json[0] = JSON.stringify(tool.json[0]);
+
+        //出力エリアへの反映
+        document.getElementById('outputForms').innerHTML = null;
+        if (!tool.htmlOutputMode.checked) {
+          tool.setTemplateOutput('json', 'News', tool.json[0]);
+          tool.setTemplateOutput('csv', 'Media', tool.csv);
+        } else {
+          tool.setTemplateOutput('text', 'PC', str);
+          tool.setTemplateOutput('text', 'FP', strFp);
+          tool.setTemplateOutput('csv', 'Media', tool.csv);
+        }
+        document.getElementById('itemsEditorButton').classList.remove('hidden');
+        return str;
+      }
+
+      function setSourceGoodsNews() {
+        let str = "", strFp = "", manuscript = "";
+
+        // ヘッダー部分の書き出し
+        str = tool.getTemplateParts('header') + '\n';
+        strFp = tool.getTemplateParts('headerFp') + '\n';
+
+        // ループ部分の書き出し
+        for (let _manuscriptId in tool.items) {
+          str += tool.getTemplateReplace('loop', _manuscriptId);
+          strFp += tool.getTemplateReplace('loopFp', _manuscriptId);
+        }
+
+        // フッター部分の書き出し
+        str += tool.getTemplateParts('footer');
+        strFp += tool.getTemplateParts('footerFp');
+
+        tool.json = Module.cloneAssoc(tool.settings.json);
+        //console.table(tool.items);
+        tool.json[0].date.val = tool.date.value.replace(/-/g, '/');
+        tool.json[0].body1.val = str;
+        tool.json[0].body2.val = strFp;
+        tool.json[0] = JSON.stringify(tool.json[0]);
+
+        //出力エリアへの反映
+        document.getElementById('outputForms').innerHTML = null;
+        if (!tool.htmlOutputMode.checked) {
+          tool.setTemplateOutput('json', 'News', tool.json[0]);
+          tool.setTemplateOutput('csv', 'Media', tool.csv);
+        } else {
+          tool.setTemplateOutput('text', 'PC', str);
+          tool.setTemplateOutput('text', 'FP', strFp);
+          tool.setTemplateOutput('csv', 'Media', tool.csv);
+        }
+        document.getElementById('itemsEditorButton').classList.remove('hidden');
+        return str;
+      }
+
+
+      function exportCsv() {
+        const csvFileName = 'media.csv';
+
+        let str_array = Encoding.stringToCode(tool.csv.replace(/\r\n|\r|\n/g, '\r\n'));
+        log(tool.csv.replace(/\r\n|\r|\n/g, '\r\n'));
+        let sjis_array = Encoding.convert(str_array, "SJIS", "UNICODE");
+        let uint8_array = new Uint8Array(sjis_array);
+        let blob = new Blob([uint8_array], { type: "text/csv;" });
+
+        if (window.navigator.msSaveBlob) {
+          window.navigator.msSaveBlob(blob, csvFileName);
+          // msSaveOrOpenBlobの場合はファイルを保存せずに開ける
+          window.navigator.msSaveOrOpenBlob(blob, csvFileName);
+        } else {
+          document.getElementById("download").href = window.URL.createObjectURL(blob);
+        }
+      }
+
+      function outputFilter(str) {
+        return str.replace(/src="\/fp\/img\/dummy.gif"/g, 'src="img/dummy.gif"')
+          .replace(/ (href|src)="\//g, ' $1="http://preview.mobile.b.example.com/');
+      }
+      var tool = new ConverterPageProject({ teamId: 'b', outputFilter: outputFilter });
+
+      //Convert Order
+      function convertOrder() {
+        tool.convertPrepare();
+        let str  = tool.before.value;
+        if(!str) {
+          tool.info('原稿エリアに何も入力されていません。');
+          return;
+        }
+        str = Convert.proof(str, 'b');
+
+        log(document.conv.projectMode.value);
+        replaceLog = [];
+        if (document.conv.projectMode.value === 'media') {
+          str = convertProcessMedia(str);
+        }
+        if (document.conv.projectMode.value === 'localCalendar') {
+          str = convertProcessLocalCalendar(str);
+        }
+        if (document.conv.projectMode.value === 'goodsNews') {
+          str = convertProcessGoodsNews(str);
+        }
+        if (document.conv.projectMode.value === 'contentsNews') {
+          str = convertProcessContentsNews(str);
+        }
+
+        tool.finish('変換してクリップボードにコピーしました。', str);
+      }
+
+/*
+code=window.prompt('更新コードを入力してください。');
+var items=JSON.parse(code);
+console.table(items);
+var form=window.frames[0].frames[1].EDITOR;
+for(id in items){
+  if(items[id]['checkbox']){
+    for(_num of items[id]['checkbox']){
+      if(!form.elements[items[id]['name']][0]){
+        form.elements[items[id]['name']].checked=items[id]['val'];
+      }else{
+        form.elements[items[id]['name']][_num].checked=items[id]['val'];
+      }
+    }
+  }else{
+    form.elements[items[id]['name']].value=items[id]['val'];
+  }
+}
+*/
+    </script>
+  </body>
+</html>

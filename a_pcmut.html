@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PC Markup Tool</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<!--<link rel="stylesheet" href="http://www.a.example.com/dummy.css">
+<link rel="stylesheet" href="http://www.a.example.com/dummy.css">-->
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="css/aparts.css">
+<link rel="stylesheet" href="css/style.css">
+
+<script type="text/javascript">
+var imgCounter = {
+  cnt: 0,
+  countUp: function() {
+    this.cnt ++;
+    console.log('this.cnt: '+ this.cnt);
+  }
+};
+</script>
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+      <span class="navbar-brand">A-PCMUT</span>
+    </div>
+    <!-- navigation -->
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="nav navbar-nav">
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamB<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="b_pcmut.html">PC Markup</a></li>
+                <li><a href="b_pc2fp.html">FP Convert</a></li>
+                <li><a href="b_project.html">Project Automation</a></li>
+                <li><a href="b_results.html">Game Result</a></li>
+                <li><a href="b_calendar.html">Store Calendar</a></li>
+              </ul>
+            </li>
+
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamA<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="a_pcmut.html">PC Markup</a></li>
+                <li><a href="a_pc2fp.html">FP Convert</a></li>
+                <li class="divider"></li>
+                <li><a href="a_4lbtb.html">Lookback</a></li>
+                <li><a href="a_mmbranch.html">Mail Magazine</a></li>
+              </ul>
+            </li>
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Common<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="c_csvdf.html">CSV Define</a></li>
+                <li><a href="c_xl2tb.html">Tablize</a></li>
+                <li><a href="c_tb2dl.html">Table to DL</a></li>
+                <li><a href="c_bmlib.html">Bookmarklet</a></li>
+                <li class="divider"></li>
+                <li><a href="c_start.html">Introduction</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-right">
+            <li>
+              <div class="checkbox">
+                <label><input type="checkbox" id="displayProcedure">説明を表示する</label>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <!-- /navigation -->
+
+  </div>
+</nav><div id="info"></div>
+
+<section id="pcmut">
+  <p class="procedure well">原稿に特殊なタグを追加することで、高速にニュースやページを作成するツールです。<br>
+    文章校正や画像のナンバリングも同時に行います。</p>
+  <h1 class="procedure"><span class="circle-text label-warning">1</span> 画像用に日付とファイル名を設定する</h1>
+  <form name="conv">
+    <div class="container">
+      <div class="col-xs-4">
+        <div class="form-group">
+        <label>ニュース日付</label>
+          <input type="date" name="date" class="form-control">
+        </div>
+        <p class="procedure">&lt;img&gt;タグの画像ファイルパスに使用されます。(/images/<span class="eg-mark">yy</span>/<span class="eg-mark">mm</span>/<span class="eg-mark">dd</span>/)</p>
+      </div>
+      <div class="col-xs-4">
+        <div class="form-group">
+        <label>画像ファイル名</label>
+          <input type="text" name="imgName" class="form-control" placeholder="image" list="imgNameList">
+          <datalist id="imgNameList">
+            <option value="event">
+            <option value="fanclub">
+            <option value="goods">
+            <option value="gourmet">
+            <option value="ticket">
+            <option value="uniform">
+          </datalist>
+        </div>
+        <p class="procedure">&lt;img&gt;タグの画像ファイル名に使用されます。(xh_<span class="eg-mark">　　　</span>.jpg)</p>
+      </div>
+      <div class="col-xs-4">
+        <div class="checkbox">
+          <label><input type="checkbox" name="parBreak" value="">&lt;p&gt;改行</label>
+          <p class="procedure">&lt;p&gt;タグ内文章段落で改行が挿入されている場合に&lt;br&gt;改行タグを挿入します。</p>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" name="autoParagraph" value="">自動で文章段落に変換</label>
+          <p class="procedure">なにも記号がつけられていない部分をすべて文章段落として扱います。</p>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" name="disableMarkdown" value="">原稿マークダウン無効</label>
+          <p class="procedure">原稿変換自動化のための記法を無効にします。(ページ下部参照)</p>
+        </div>
+      </div>
+    </div>
+
+    <h1 class="procedure"><span class="circle-text label-warning">2</span> 原稿にタグを追記して変換</h1>
+    <div class="container well procedure">
+      <div class="col-xs-4">
+        <p>ツールタグを使って原稿にタグをつけます<br>
+          改行の位置に注意してください</p>
+        <p>詳細はページ下部に記載</p>
+      </div>
+      <div class="col-xs-2">
+        <span class="text-warning">■</span>中見出し<span class="eg-mark">&crarr;</span><br>
+        <span class="text-warning">▼</span>小見出し<span class="eg-mark">&crarr;</span><br>
+        <span class="text-warning">[赤字]</span>強調<span class="text-warning">[赤字]</span><br>
+        <span class="text-warning eg-mark">　</span>文章段落<span class="eg-mark">&crarr;</span><span class="eg-mark">&crarr;</span><br>
+      </div>
+      <div class="col-xs-2">
+        項目<span class="eg-mark">Tab</span>内容<span class="eg-mark">&crarr;</span><br>
+        項目<span class="eg-mark">Tab</span>内容<span class="eg-mark">&crarr;</span><span class="eg-mark">&crarr;</span><br>
+        <span class="text-warning">※</span>注釈<span class="eg-mark">&crarr;</span><br>
+        <span class="text-warning">・</span>リスト<span class="eg-mark">&crarr;</span><br>
+      </div>
+      <div class="col-xs-4">
+        <span class="text-warning">{img}</span>画像説明<span class="eg-mark">&crarr;</span><br>
+        <span class="text-warning">{img cap}</span>キャプション <span class="eg-mark">&crarr;</span><br>
+        <span class="text-warning">{a http://...}</span>テキストリンク<span class="eg-mark">&crarr;</span><br>
+        <span class="text-warning">{a http://... btn}</span>リンクボタン<span class="eg-mark">&crarr;</span><br>
+      </div>
+    </div>
+
+
+    <textarea name="before" class="form-control" rows="6" placeholder="原稿"></textarea>
+    <button type="button" class="btn btn-warning btn-lg btn-block" onclick="convertOrder()"><span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span> Convert &amp; Copy</button>
+    <div class="container">
+      <div class="col-xs-4">
+        <button type="button" class="btn btn-default btn-lg btn-block" onclick="tool.refreshOrder()"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 更新</button>
+      </div>
+      <div class="col-xs-4">
+        <button type="button" class="btn btn-default btn-lg btn-block" onclick="tool.openAllLinks()"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> 全リンクを開く</button>
+      </div>
+      <div class="col-xs-4">
+        <button type="button" class="btn btn-default btn-lg btn-block" onclick="Textarea.addTag(tool.before, '\t', '')"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> タブ文字を挿入</button>
+      </div>
+    </div>
+
+  <div class="row">
+    <div class="col-md-5">
+      <h1 class="procedure"><span class="circle-text label-warning">3</span> 確認</h1>
+      <div id="output" class="panel panel-default center-block" style="visibility: hidden; opacity: 0;">
+        <div class="panel-heading">簡易プレビュー</div>
+        <div class="panel-body">
+        </div>
+      </div>
+    </div>
+    <div class="col-md-7">
+      <h1 class="procedure"><span class="circle-text label-warning">4</span> 微調整</h1>
+      <div class="well procedure">
+        <p>出力されたソースを変更して更新ボタン (もしくはShift + Enter) を押すと簡易プレビューの内容が更新されます。<br>
+          タグにカーソルを合わせてボタンをクリックするとクラスを追加できます。</p>
+      </div>
+      <div id="replaceLogArea"></div>
+      <textarea name="after" class="form-control" rows="6" placeholder="PC版ソース原型"></textarea>
+      <div class="container">
+        <div class="col-xs-2">
+          <button type="button" class="btn btn-default btn-block btn-xs" onclick="Textarea.addClass(tool.after, 'web-text-bold')">.web-text-bold</button>
+        </div>
+        <div class="col-xs-2">
+          <button type="button" class="btn btn-default btn-block btn-xs" onclick="Textarea.addClass(tool.after, 'web-text-red')">.web-text-red</button>
+        </div>
+        <div class="col-xs-2">
+          <button type="button" class="btn btn-default btn-block btn-xs" onclick="Textarea.addTag(tool.after, '<p>')">p</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </form>
+
+  <div class="well foot-info">
+    <p><a href="javascript:if(confirm('記述例を表示しますか？\n(原稿が入力されていた場合は上書きされます。)')){tool.before.value = '{p}リード文などの文章段落はこのように記述します。\n&lt;p&gt; Line Breakがオフなら改行は無視されます。\n\n{p}文章の段落が分かれている場合は一行開けて記述してください。\n\n※注釈文はこのように記述します。\n※二つ以上続けるとリストがまとめられます。\n・中黒についても同様です。\n\n{h2}大見出し\n{img}alt属性に入る内容をここに記述します。FP版でリンクテキストに使用されます。\n{img cap}オプションにcapを指定すると画像キャプションが付きます\n{p}画像を連続して配置すると連続自動的に2～3カラムが成形されます。\n\n■中見出し\n#リンク先を自動で判別して内部リンクはルート相対パスに変換し、外部リンクは新規ウィンドウで開きます。\n\n{a http://www.b.example.com/ btn}詳細はこちら\n{a http://google.co.jp/ btn}外部リンク\n{h3}中見出し\n{dl}\n項目別リスト|tab、もしくは半角｜で区切ってください。\n使用方法|リストの始めと終わりを記号で囲み、項目名の終わりをtabか：で区切ってください。\n複数行記述も可能です。\n\n{h4}小見出し\n小見出しと最小見出しに対応しています。\n\n{h4}注釈の対応\n※注釈に対応しています。\n{/dl}\n\n【リンク】\n>フッターリンクはPaddingが外れます\nhttp://www.b.example.com/dummy/\n>フッターリンク開始位置が見つけられなかった場合は最後尾にdivの閉じタグが付きます\nhttp://google.co.jp/';convertOrder()}"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 見本を表示する</a></p>
+    <hr>
+    <p>変換＋コピー : Convert &amp; Copy をクリック、または原稿エリアにフォーカスして Shift + Enter</p>
+    <p>プレビューの更新 : Refresh をクリック、または出力エリアにフォーカスして Shift + Enter</p>
+    <p>リンク先の確認 : Open All Links をクリックで全てのリンクを開きます (ポップアップの許可が必要)</p>
+    <p>イベントモード : イベントページ にチェックを入れると画像のパスがイベント用の指定になります</p>
+    <p>クラスの追加 : ソース編集エリアでタグにカーソルを合わせて .web-text-bold .web-text-red ボタンを押すとクラスが追加されます</p>
+    <p>タグの追加 : ソース編集エリアで範囲選択し p ボタンを押すと段落タグを追加します。</p>
+  </div>
+
+    <h2 class="text-center">ツールタグ記法</h2>
+    <p class="text-center">HTMLタグ名に合わせて追加した記法です。マークダウン記法と混在できます。</p>
+    <div class="container">
+      <div class="col-sm-4">
+        <span class="text-warning">{h2}</span>大見出し<span class="eg-mark">&crarr;</span><br>
+        <span class="text-warning">{h3}</span>中見出し<span class="eg-mark">&crarr;</span><br>
+        <span class="text-warning">{h4}</span>小見出し<span class="eg-mark">&crarr;</span><br>
+        <span class="text-warning">{b}</span>太字行<span class="eg-mark">&crarr;</span><br>
+        <span class="text-warning">{p}</span>文章段落<span class="eg-mark">&crarr;</span><span class="eg-mark">&crarr;</span><br>
+        <hr>
+        <span class="text-warning">{h1}</span>ページ見出し<span class="eg-mark">&crarr;</span><br>
+        <p class="eg-mark">イベントページモード が自動的に ON になります</p>
+        <hr>
+      </div>
+      <div class="col-sm-4">
+        <span class="text-warning">{img}</span>画像説明<span class="eg-mark">&crarr;</span><br>
+        <span class="text-warning">{img cap}</span>画像キャプション <span class="eg-mark">&crarr;</span><br>
+        <p class="eg-mark">Tips:<br>日付と画像ファイル名から<br>画像パスが決定されます</p>
+        <hr>
+        <span class="text-warning">{dl}</span><br>
+        項目名<span class="text-warning">|</span>内容<span class="eg-mark">&crarr;</span><br>
+        項目名<span class="text-warning">|</span>長い内容<span class="eg-mark">&crarr;</span><br>
+        内容続き<br>
+        <span class="text-warning">{/dl}</span>
+        <p class="eg-mark">tab文字でも区切れます</p>
+        <hr>
+      </div>
+      <div class="col-sm-4">
+        <span class="text-warning">{a http://...}</span>テキストリンク<span class="eg-mark">&crarr;</span><br>
+        <span class="text-warning">{a http://... btn}</span>リンクボタン<span class="eg-mark">&crarr;</span><br>
+        <p class="eg-mark">外部リンクを自動判別します</p>
+        <hr>
+        <span class="text-warning">※</span>注釈<span class="eg-mark">&crarr;</span><br>
+        <span class="text-warning">・</span>リスト<span class="eg-mark">&crarr;</span><br>
+        <hr>
+      </div>
+    </div>
+
+
+  <h2 class="text-center">原稿マークダウン記法</h2>
+  <p class="text-center">見出し、リンクなどをチームAの原稿書式に合わせた記法です。</p>
+  <div class="container">
+    <div class="col-sm-4">
+      ■見出し<span class="eg-mark">&crarr;</span><br>
+      ▼見出し<span class="eg-mark">&crarr;</span><br>
+      ◆小見出し<span class="eg-mark">&crarr;</span><br>
+      [太字]太い文字[太字]普通の文字<br>
+      [赤字]赤い文字[赤字]普通の文字<br>
+      <span class="eg-mark">　</span>文章段落<span class="eg-mark">&crarr;</span><span class="eg-mark">&crarr;</span><br>
+      <p class="eg-mark">行頭に全角スペースをつけて終わったら一行あけてください</p>
+      <hr>
+    </div>
+    <div class="col-sm-4">
+      [画像]画像説明<span class="eg-mark">&crarr;</span><br>
+      <br>
+      [画像]備考<span class="eg-mark">&crarr;</span><br>
+      [キャプション]画像説明<span class="eg-mark">&crarr;</span><br>
+      <p class="eg-mark">Tips:<br>日付と画像ファイル名から画像パスが決定されます</p>
+      <hr>
+      ＞テキストリンク<span class="eg-mark">&crarr;</span><br>
+      http://リンク先URL<span class="eg-mark">&crarr;</span><br>
+      <br>
+      ＞＞リンクボタン<span class="eg-mark">&crarr;</span><br>
+      http://リンク先URL<span class="eg-mark">&crarr;</span><br>
+      <hr>
+    </div>
+    <div class="col-sm-4">
+      項目A<span class="eg-mark">Tab</span>内容<span class="eg-mark">&crarr;</span><br>
+      項目B<span class="eg-mark">Tab</span>長い内容<span class="eg-mark">&crarr;</span><br>
+      内容続き<span class="eg-mark">&crarr;</span><br>
+      <span class="eg-mark">&crarr;</span><br>
+      <p class="eg-mark">
+        テーブルが終わったら一行開けてください。<br>
+        <br>
+        Tips:<br>テーブル等をコピーすると項目がTab文字で区切られるため、そのまま変換できます</p>
+      <hr>
+      項目1<span class="eg-mark">Tab</span>項目2<span class="eg-mark">Tab</span>項目3<span class="eg-mark">&crarr;</span><br>
+      説明<span class="eg-mark">Tab</span>説明<span class="eg-mark">Tab</span>説明<span class="eg-mark">&crarr;</span><br>
+      [表] 3列 見出し列0 見出し行1<span class="eg-mark">&crarr;</span><br>
+      <span class="eg-mark">&crarr;</span><br>
+      <p class="eg-mark">
+        3列以上あるとテーブルに変換されます<br>
+        また、見出しの範囲を指定することができます
+      </p>
+      <hr>
+    </div>
+  </div>
+ </section>
+<hr>
+<div class="row">
+  <div class="text-center text-muted">
+    Copyright &copy; 2017 &middot; Released under the MIT license &middot; Kaoru Yoshinaga
+  </div>
+</div>
+<hr>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script type="text/javascript" src="settings.txt"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript">
+  function outputFilter(str) {
+    return str
+      .replace(/src="\/fp\/img\/dummy.gif"/g, 'src="img/dummy.gif"')
+      .replace(/ (href|src)="\//g, ' $1="http://preview.www.a.example.com/')
+      .replace(/<img .*?xh_(.*?).jpg".*?>/g, '<div class="dummy-img">xh_$1.jpg</div>');
+  }
+  let tool = new ConverterPagePc({teamId: 'a', outputFilter: outputFilter});
+
+  //Convert Order
+  function convertOrder() {
+    tool.convertPrepare();
+    var str  = tool.before.value;
+    str = Convert.proof(str, 'a');
+    if (str) {
+      if ((!str.match(/^\s*?<div class="web-containerBA web-container-AB/))&&(str.match(/(?:.*?\n){3}/))) {
+        str = '<div class="web-containerBA web-container-AB">\n' + tool.convertProcess(str);
+        if (str.match(/【?リンク】?\n<p><a/g)) {
+          str = str.replace(/【?リンク】?\n<p><a/g, '</div>\n<p><a')
+        } else {
+          str += '</div>';
+        }
+        str = str.replace(/<div class="web-containerBA web-container-AB">\s*<\/div>/g, '');
+      } else {
+        str = tool.convertProcess(str);
+      }
+      tool.after.value = str;
+      tool.finish('変換してクリップボードにコピーしました。', str);
+    } else {
+      tool.info('原稿に何も入力されていません。', 'info-attn');
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+if (typeof settingsTemplate === 'undefined') { var settingsTemplate = []; }
+
+settingsTemplate.localCalendar = {
+  /**
+   * {:name} 項目を挿入する
+   * {?name 表示するソース} 原稿内に項目が見つけられた場合に表示する
+   * {!name 表示するソース} 原稿内に項目が見つけられなかった場合に表示する
+   *
+   * 例: 原稿にurlの項目がある場合にリンクを表示し、ない場合には『リンクはありません』と表示する場合
+   * {?url <a href="{:url}">リンク</a>}{!url リンクはありません}
+   */
+
+  template: {
+
+  /** 個別メディア情報テンプレート */
+  sp: `
+    <div>{:date_m}/{:date_d} {:column_id} {:team_vs}</div>
+  `,
+  fp: `
+    {:date_m}/{:date_d} {:column_id} {:team_vs}
+  `,
+
+  }, //template: ここまで
+  /**
+   * 項目定義
+   * プレースホルダーの名前とメール原稿の読み取り条件
+   * 正規表現で指定し、必要な文字列を()で囲む
+   */
+  itemDefine: {
+    team_vs: '相手チーム',
+    column_id: '00000000',
+    date_m: ['1'],
+    date_d: ['2'],
+    game_m: ['1'],
+    game_d: ['1'],
+  },
+  /** メディア情報に必ず存在する要素 */
+  itemRequired: 'event',
+  json: [ //ニュースのJSON
+    {
+      title: {
+        name: "OpenCmsString.Title_1_.0",
+        val: "{:date_m}/{:date_d} 配信コンテンツ",
+      },
+      newsDevice: {
+        name: "OpenCmsString.Device_1_.0",
+        val: true,
+        checkbox: [1, 2]
+      },
+      date: {
+        name: "OpenCmsDateTime.DisplayDate_1_.0",
+        val: "yyyy/mm/dd",
+      },
+        category: {
+        name: "OpenCmsString.Category_1_.0",
+        val: "/.content/news/category/nc_00000009.html",
+      },
+      sugotoku: {
+        name: "OpenCmsBoolean.DisplayToSugotoku_1_.0",
+        val:  true,
+        checkbox: [0],
+      },
+      topics: {
+        name: "OpenCmsBoolean.DisplayTotopics_1_.0",
+        val: false,
+        checkbox: [0],
+      },
+      device1: {
+        name: "OpenCmsString.NewsBody_1_.Choice_1_.Easy_1_.Device_1_.0",
+        val: true,
+        checkbox: [1],
+      },
+      device2: {
+        name: "OpenCmsString.NewsBody_1_.Choice_1_.Easy_2_.Device_1_.0",
+        val: true,
+        checkbox: [2],
+      },
+      body1: {
+        name: "OpenCmsString.NewsBody_1_.Choice_1_.Easy_1_.BodyTextUpper_1_.0",
+        val: "",
+      },
+      body2: {
+        name: "OpenCmsString.NewsBody_1_.Choice_1_.Easy_2_.BodyTextUpper_1_.0",
+        val: "",
+      },
+    },
+  ]
+};

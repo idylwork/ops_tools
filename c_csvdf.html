@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSV Define</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<!--<link rel="stylesheet" href="http://www.b.example.com/dummy.css">
+<link rel="stylesheet" href="http://www.b.example.com/dummy.css">-->
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="css/bparts.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+      <span class="navbar-brand">C-CSVDF</span>
+    </div>
+    <!-- navigation -->
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="nav navbar-nav">
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamB<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="b_pcmut.html">PC Markup</a></li>
+                <li><a href="b_pc2fp.html">FP Convert</a></li>
+                <li><a href="b_project.html">Project Automation</a></li>
+                <li><a href="b_results.html">Game Result</a></li>
+                <li><a href="b_calendar.html">Store Calendar</a></li>
+              </ul>
+            </li>
+
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamA<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="a_pcmut.html">PC Markup</a></li>
+                <li><a href="a_pc2fp.html">FP Convert</a></li>
+                <li class="divider"></li>
+                <li><a href="a_4lbtb.html">Lookback</a></li>
+                <li><a href="a_mmbranch.html">Mail Magazine</a></li>
+              </ul>
+            </li>
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Common<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="c_csvdf.html">CSV Define</a></li>
+                <li><a href="c_xl2tb.html">Tablize</a></li>
+                <li><a href="c_tb2dl.html">Table to DL</a></li>
+                <li><a href="c_bmlib.html">Bookmarklet</a></li>
+                <li class="divider"></li>
+                <li><a href="c_start.html">Introduction</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-right">
+            <li>
+              <div class="checkbox">
+                <label><input type="checkbox" id="displayProcedure">説明を表示する</label>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <!-- /navigation -->
+
+  </div>
+</nav><div id="info"></div>
+
+
+
+<section>
+  <form name="conv">
+    <div class="container">
+      <div class="col-xs-6">
+
+        <div class="form-group">
+          <input type="date" name="date" class="form-control">
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" name="highlightOnly" value="">直さずハイライトにする</label>
+          <p class="procedure">検索に一致した語句を自動的に置換せず、ハイライトした状態にします</p>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" name="disableProof" value="">文字校正をしない</label>
+          <p class="procedure">通常はCSVを利用した変換にかける前に基本的な文字校正をかけますが、それを無効にします</p>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" name="carrmark" value="">改行を可視化する</label>
+          <p class="procedure">簡易プレビューで改行文字が見えるようにします</p>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" name="preformatted" value="">HTMLタグを展開しない</label>
+          <p class="procedure">簡易プレビューでHTMLタグを有効にせず、ソースの状態のまま表示します</p>
+        </div>
+        <h1 class="procedure"><span class="circle-text label-danger">2</span> 原稿を入力して変換</h1>
+        <textarea name="before" class="form-control" rows="6" placeholder="原稿"></textarea>
+        <button type="button" class="btn btn-danger btn-lg btn-block" onclick="convertOrder()"><span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span> Convert &amp; Copy</button>
+        <label>文字サイズ調節<input id="fontSlider" type="range" value="14" min="12" max="30" step="1"></label>
+        <p class="procedure">簡易プレビュー部分の文字サイズ</p>
+      </div>
+
+      <div class="col-xs-6">
+        <h1 class="procedure"><span class="circle-text label-danger">1</span> CSVを読み込む</h1>
+        <div id="dropfile">CSVファイルをここにドロップ</div>
+        <div class="form-group">
+          <input type="file" id="upfile" name="upfile" class="form-control" placeholder="image">
+        </div>
+        <p class="procedure">変換する文字列を定義したCSVを読み込みます<br>
+        点線の部分にCSVファイルをドラッグ&amp;ドロップするか、ファイルを選択から選択してください</p>
+      </div>
+    </div>
+
+
+  <div class="row">
+    <div class="col-sm-7">
+      <h1 class="procedure"><span class="circle-text label-danger">3</span> 変換する箇所を選ぶ</h1>
+      <div id="output" class="panel panel-default center-block" style="visibility: hidden; opacity: 0;">
+        <div class="panel-heading">簡易プレビュー</div>
+        <div class="panel-body">
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-5">
+      <h1 class="procedure"><span class="circle-text label-danger">4</span> ソースをコピー</h1>
+      <textarea name="after" class="form-control" rows="6" placeholder="変換後"></textarea>
+    </div>
+  </div>
+  </form>
+  <div class="well box-foot-info">
+    <p><a href="javascript:if(confirm('sample.csv用の記述例を表示しますか？\n(原稿が入力されていた場合は上書きされます。)')){tool.before.value = '見本';convertOrder()}"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 見本を表示する</a></p>
+    <hr>
+    <h3>CSVを作成</h3>
+    <p>Excelで2列のCSVを作成すると、変換テーブルとして使用することができます。</p>
+    <p>左側 (A列) が変換前、右側 (B列) が変換後の文字列です。</p>
+    <p>CSVは上から順に評価していくため、普遍的な単語や文字数の少ないものは下に移動しておきましょう。
+      例えばヒットとスリーベースヒットでは、ヒットが先に置換されるとスリーベースヒットが置換されなくなるため、スリーベースヒットを上にする必要があります。</p>
+    <p>全角の英数、一部の記号はCSVで評価する前に半角に変換されます。
+      また、記号はエスケープシークエンスに、機種依存文字の一部は常用漢字に置き換えられます。
+      例えば括弧などは半角に置き換えられるため、CSVの指定は全角になっていると正しく置き換えられないことがあります。</p>
+    <p>CSVは書式情報を保存しないため、Excelでの保存時に『選択したファイル形式で保存した場合に動作しない、または削除される可能性のある機能が含まれています』というような警告がでることがありますが、気にせず続行を選択してください。</p>
+
+
+    <p>{:yyyy}西暦{:mm}月{:dd}日{:count}2桁の連番{:hankaku}カタカナをすべて半角変換</p>
+    <hr>
+    <h3>CSVを登録</h3>
+    <p>作成したCSVをページ右上の<span style="font-size: 10px; border: 2px dashed #bbb; border-radius: 5px; margin: 4px; padding: 2px; text-align: center; color: #bbb; background: #fbf6f6;">ファイルドロップ</span>にドラッグ&amp;ドロップするか、ファイルを選択からファイルを読み込んでください。</p>
+    <hr>
+    <h3>変換</h3>
+    <p>CSVを登録したら原稿エリアにテキストを入力し、Convert &amp; Copy をクリック。ブラウザ上で Shift + Enter でも変換できます。</p>
+
+    <hr>
+    <h3>部分的な差し戻し</h3>
+    <p>プレビューパネルで赤くなった文字をクリックすることで変換前の状態に戻すことができます。
+      もう一度クリックすれば変換後の状態に戻すこともできます。</p>
+    <hr>
+    <h3>すこし高度なこと</h3>
+    <p>以下は分からなければ読まなくて大丈夫です。</p>
+    <h4>文字コードと改行コード</h4>
+    <p>文字コードは Excel に準拠して Shift-JIS を使用しています。
+      改行コードは LF、CR、CR+LF に対応していますが、読み込みがうまくいかないときは改行コードと文字コードを見直してみてください。</p>
+    <h4>正規表現による置換</h4>
+    <p>正規表現に対応しています。
+      /スラッシュで囲んで表現することで、正規表現として扱います。グループ化の場合は右列に$1のように記述してください。
+      &#92;バックスラッシュはCSVのエスケープ文字となっているため、&yen;&#92; と表記してください。
+      (フォントと文字コードの関係上、エクセルでは &yen;&yen; と表示される場合があります。)
+      全角バックスラッシュ＼を半角バックスラッシュとして扱います。</p>
+    <p>例:<br>
+    <dl class="dl-horizontal">
+      <dt>/&lt;p&gt;(.*?)&lt;＼/p&gt;/</dt>
+      <dd>&lt;span&gt;$1&lt;/span&gt;&lt;br&gt;</dd>
+      <dt>&lt;p&gt;凡例&lt;/p&gt;</dt>
+      <dd>&lt;span&gt;凡例&lt;/span&gt;&lt;br&gt;</dd>
+    </dl>
+    <dl class="dl-horizontal">
+      <dt>/¥&#92;d{1,2}時¥&#92;d{2}分/</dt>
+      <dd>$1:$2</dd>
+      <dt>10時30分</dt>
+      <dd>10:30</dd>
+    </dl>
+    <h4>改行エスケープ特例</h4>
+    <p>JSON出力などで改行コード \n を入力したい場合、CSV変換後セルが \\n となっている行が存在すれば、以降の処理でエスケープを保護したまま処理します。</p>
+  </div>
+ </section>
+<hr>
+<div class="row">
+  <div class="text-center text-muted">
+    Copyright &copy; 2017 &middot; Released under the MIT license &middot; Kaoru Yoshinaga
+  </div>
+</div>
+<hr>
+<div id="rollback-baloon" class="baloon-hidden">バルーン</div>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script type="text/javascript" src="settings.txt"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript">
+  function outputFilter() {
+    var result = tool.sourcePreview;
+    if (tool.preformatted.checked) { result = Convert.htmlSpecialChars(result); }
+    if (tool.carrmark.checked) { result = result.replace(/\n/g, '<small>&crarr;</small>\n'); }
+    if (tool.preformatted.checked) { result = result.replace(/\n/g, '<br>'); }
+    return result.replace(tool.tagChangedReg.start, function(_all, _replaceId){
+      return '<span class="has-changed" data-replace-id="'
+        + _replaceId
+        + '" data-before="'
+        + Convert.htmlSpecialChars(tool.rollback[_replaceId])
+        .replace(/{/g, '&#123;')
+        .replace(/}/g, '&#125;')
+        + '">';
+      })
+      .replace(tool.tagChangedReg.end, '</span>');
+  }
+  var tool = new ConverterPageCsv({ outputFilter: outputFilter });
+
+  function getFileData(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    log(event);
+    if(event.dataTransfer) {
+      var upfile = event.dataTransfer.files[0];
+    } else if (event.target) {
+      var upfile = event.target.files[0];
+    } else {
+      tool.info('読み込みに失敗しました。');
+      return;
+    }
+    tool.info(upfile.name + 'を読み込みます。<br>\nmodified: ' + upfile.lastModifiedDate.toLocaleDateString());
+    var csvData = new FileReader();
+    log(csvData.result);
+    csvData.onload = function() { getCsvData(csvData.result); }
+    csvData.readAsText(upfile, 'Shift_JIS');
+  }
+
+  function getCsvData(csv) {
+    localStorage['c_csvdf.csv'] = csv;
+    csv = Convert.unescapeControl(csv);
+    csv = csv.replace(/\r\n|\r|\n/g, '\n') //改行コードの統一
+    .replace(/\n+$/, '')
+    .replace(/""/g, '{quot}')
+    .replace(/([\n,])"([\s\S]*?)"/g, function(_all, _before, _cell){
+      return _before + _cell.replace(/\n/g, '{ne}').replace(/,/g, '{sc}');
+    });
+    log(csv);
+
+    var _rows = csv.replace(/＼/g, '\\')
+    .replace(/<\/([a-z]{10})>/g, '<\\/$1>')
+    .replace(/\{n\}/g, '\\s*?')
+    .replace(/\{\$\}/g, '(.*?)')
+    .replace(/\{\$\$\}/g, '([\\s\\S]*?)')
+    .replace(/\n/g, '{split}')
+    .split('{split}');
+
+    log('csv1 ' + _rows[0]);
+    log('csv2 ' + _rows[1]);
+
+    var _values = [];
+    //log(_rows);
+    for (var i = 0; i < _rows.length; i++) {
+      _rows[i] = _rows[i].replace(/{quot}/g, '"').replace(/{ne}/g, '\n');
+      _values[i] = _rows[i].split(',');
+      _values[i] = _values[i].map(function(_value) {
+        return _value.replace(/^"([\s\S]*)"$/, '$1').replace(/{sc}/g, ',');
+      });
+      //log(_values);
+    }
+    tool.csv = _values;
+    var fileSource = '<dl class="dl-horizontal">\n';
+    for (var i = 0; i < _values.length; i++) {
+      log('length: ' + _values.length);
+      log(_values[i][0] + '\n' + _values[i][1]);
+      fileSource += '<dt>' + Convert.htmlSpecialChars(_values[i][0]) + '</dt>';
+      fileSource += '<dd>' + (Convert.htmlSpecialChars(_values[i][1]).replace(/\$\d+/g, '<span class="text-success">$&</span>') || '<span class="text-muted">削除</span>') + '</dd>';
+    }
+    fileSource += '</dl>';
+    tool.dropfile.innerHTML = fileSource;
+  };
+
+  function mouseDragover(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+  }
+
+  var convertProcess = function (str) {
+    var highlightOnly = tool.highlightOnly.checked;
+    var replaceCount = 0;
+    var mapRp = {};
+    var argGroupLength;
+    var isRegexp, __reg;
+    var _pairsFixed = [,];
+    var targetDds = tool.dropfile.children[0].getElementsByTagName('dt');
+    var strKeep = str;
+    let breakEscapeCase = false; // \\nが存在する場合
+    let disableChangeLog = false;
+    let placeholderCount = 1;
+    let dateArray = tool.date.value.match(/(\d{4})-(\d{2})-(\d{2})/) || ['not found', '2018', '01', '01'];
+
+    tool.csv.map(function(_pairs, _key){
+      isRegexp = false;
+      disableChangeLog = false;
+      targetDds[_key].classList.remove('has-changed');
+
+      // 特殊動作の実行 {:hankaku}
+      if (_pairs[0] === '{:hankaku}') {
+        str = Convert.hankaku(str);
+        targetDds[_key].classList.add('has-changed');
+      }
+
+      // 結果用配列に代入 正規表現だった場合には直す
+      _pairsFixed[0] = _pairs[0].replace(/^\/(.*?)\/(s)?$/, (_all, _reg, _option) => {
+        if (_option === 's') { disableChangeLog = true; }
+        isRegexp = true;
+        return _reg;
+      });
+
+      /*
+      // 正規表現の展開(/に囲まれた要素)
+      if(_pairs[0].match(/^\/.*?\/s?$/)) {
+        _pairsFixed[0] = _pairs[0].replace(/^\/(.*?)\/(s)?$/, (_all, _reg, _option) => {
+          if (_option === 's') { disableChangeLog = true; }
+        });
+        //log(_pairsFixed[0]);
+        isRegexp = true;
+      } else {
+        _pairsFixed[0] = _pairs[0];
+        isRegexp = false;
+      }
+      */
+
+      _reg = new RegExp(_pairsFixed[0], 'g');
+      log(_reg + ', ' + _pairs[1] );
+      str = str.replace(_reg, function(){
+        _pairsFixed[1] = _pairs[1];
+        if(isRegexp) {
+          argGroupLength = arguments.length - 3;
+          for(var i = 1; i <= argGroupLength; i++) {
+            _pairsFixed[1] = _pairsFixed[1].replace(new RegExp('\\$' + i, 'g'), arguments[i]);
+            //log(i + '/' + argGroupLength + '|' + _pairsFixed[1]);
+          }
+        }
+
+        //改行の置き換え(\\nの置換があるかどうかで分岐)
+        if (_pairsFixed[1] === '\\\\n') {
+          breakEscapeCase = true;
+        }
+        if (breakEscapeCase === false) {
+          _pairsFixed[1] = _pairsFixed[1].replace(/\\n/g, '\n'); //通常
+        } else {
+          _pairsFixed[1] = _pairsFixed[1].replace(/\\\\n/g, '\\n'); // \\nが実行される場合
+        }
+        log(i + '/' + argGroupLength + '|' + _pairsFixed[1]);
+
+        targetDds[_key].classList.add('has-changed');
+        replaceCount++;
+        tool.rollback[replaceCount] = arguments[0];
+        if (disableChangeLog === false) {
+          return tool.tagChanged.start[0] + replaceCount + tool.tagChanged.start[1] + _pairsFixed[1] + tool.tagChanged.end[0] + replaceCount + tool.tagChanged.end[1];
+        } else {
+          return _pairsFixed[1];
+        }
+      });
+    });
+
+    // 特殊プレースホルダー処理 {:count} {:yy} {:mm} {:dd} {:hankaku}
+    str = str.replace(/{:([a-z]{2,5}) ?([^}]*)?}/g, (_all, _id, _option) => {
+      if (_id === 'yyyy') { return dateArray[1]; }
+      if (_id === 'mm') { return dateArray[2]; }
+      if (_id === 'dd') { return dateArray[3]; }
+      if (_id === 'dd') { return dateArray[3]; }
+      if (_id === 'count') {
+        if (_option === '00') {
+          return ('0' + placeholderCount++).slice(-2);
+        }
+        else if (_option === 'same') {
+          return placeholderCount - 1;
+        }
+        else if (_option === 'fix') {
+          return placeholderCount;
+        }
+        else {
+          return placeholderCount++;
+        }
+      }
+    });
+
+    tool.sourcePreview = str;
+
+    //ハイライトのみモードの場合は戻す(一度置換しないと別の単語が重複して置き換えてしまうため)
+    if(highlightOnly) {
+      for(replaceId in tool.rollback) {
+        str = strKeep;
+        rollback(null, replaceId);
+      }
+    }
+    str = str.replace(tool.tagChangedReg.all, '');
+    str = Convert.unescapeControl(str);
+    return str;
+  };
+
+  //Convert Order
+  function convertOrder() {
+    tool.convertPrepare();
+    var str = tool.before.value;
+    if(!tool.csv){
+      tool.info('有効なCSVファイルが読み込まれていません。');
+      return;
+    }
+    if(str) {
+      if (tool.disableProof.checked === false) { str = Convert.proof(str); }
+      str = convertProcess(str);
+      tool.after.value = str;
+      tool.finish('変換してクリップボードにコピーしました。', str);
+      refreshEventListener();
+    } else {
+      tool.info('原稿に何も入力されていません。', 'info-attn');
+    }
+  }
+
+  function rollback(event, replaceId = this.dataset.replaceId) {
+    tool.sourcePreview = tool.sourcePreview
+      .replace(new RegExp(tool.tagChanged.start[0] + replaceId + tool.tagChanged.start[1]+ '([\\s\\S]*?)' + tool.tagChanged.end[0] + replaceId + tool.tagChanged.end[1]), function(_all, _after) {
+      _all = tool.rollback[replaceId];
+      tool.rollback[replaceId] = _after;
+      //log('Rollback: ' + _all + ' → ' + tool.rollback[replaceId]);
+      tool.baloon.innerHTML = _after;
+      return tool.tagChanged.start[0] + replaceId + tool.tagChanged.start[1]
+        + _all + tool.tagChanged.end[0] + replaceId + tool.tagChanged.end[1];
+    });
+    var str = tool.sourcePreview.replace(tool.tagChangedReg.all, '');
+    tool.after.value = str;
+    tool.previewRefresh(str);
+    refreshEventListener();
+  }
+
+  function refreshEventListener() {
+    var changedArea = output.children[1].getElementsByClassName('has-changed');
+
+    Array.prototype.forEach.call(changedArea, function(_span) {
+      _span.addEventListener('mouseover', function() {
+        clearTimeout(tool.baloonFadeout);
+        var bounds = this.getBoundingClientRect();
+        var x = bounds.left + (tool.body.scrollLeft || tool.html.scrollLeft) - tool.html.clientLeft - 7;
+        var y = bounds.top + (tool.body.scrollTop || tool.html.scrollTop) - tool.html.clientTop + this.offsetHeight - 60;
+        //log('[' + x + ',' y + ']');
+        tool.baloon.style.top = y + 'px';
+        tool.baloon.style.left = x + 'px';
+        tool.baloon.innerHTML = Convert.htmlSpecialChars(this.dataset.before);
+        tool.baloon.classList.remove('baloon-hidden');
+        //tool.baloon.setAttribute('style', 'opacity: 1; transition: 0.4;');
+      });
+      _span.addEventListener('mouseout', function() {
+        tool.baloonFadeout;
+        clearTimeout(tool.baloonFadeout);
+        tool.baloonFadeout = setTimeout( function() { tool.baloon.classList.add('baloon-hidden'); }, 2000 );
+      });
+      _span.addEventListener('click', rollback);
+    });
+  }
+</script>
+</body>
+</html>

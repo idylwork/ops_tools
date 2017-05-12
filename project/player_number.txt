@@ -1,0 +1,44 @@
+const settingsParams = [];
+settingsParams.player = {
+/** 選手名鑑年号 */
+displayYear: 2018,
+}
+
+/**
+* 選手 背番号
+* 以下のページをブラウザからそのままコピーして更新してください。
+* http://mobile.b.example.com/dummy.html
+*/
+
+/* 監督・コーチ 背番号 以下の行から */ settingsParams.playerNumber = `
+
+icon投手
+  1 選手名
+
+このﾍﾟｰｼﾞのﾄｯﾌﾟ
+
+icon内野手
+  1 選手名
+
+このﾍﾟｰｼﾞのﾄｯﾌﾟ
+
+icon外野手
+  1 選手名
+
+`; /* 選手 背番号 ここまで */
+
+/**
+* 監督・コーチ 背番号
+* 以下のページをブラウザからそのままコピーして更新してください。
+* http://mobile.b.example.com/dummy.html
+*/
+
+settingsParams.staffNumber = `
+
+icon一軍監督/ｺｰﾁ
+1 選手名
+
+icon二軍監督/ｺｰﾁ
+1 選手名
+
+`; /* 監督・コーチ 背番号 以上の行まで */

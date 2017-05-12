@@ -1,0 +1,5 @@
+#作業用一時ファイル
+_temp/
+dist/
+node_modules/
+

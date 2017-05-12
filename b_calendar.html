@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Store Calendar</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link href="css/bfp.css" rel="stylesheet">
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+<link href="cssb_hours.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+      <span class="navbar-brand">B-CALENDAR</span>
+    </div>
+    <!-- navigation -->
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="nav navbar-nav">
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamB<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="b_pcmut.html">PC Markup</a></li>
+                <li><a href="b_pc2fp.html">FP Convert</a></li>
+                <li><a href="b_project.html">Project Automation</a></li>
+                <li><a href="b_results.html">Game Result</a></li>
+                <li><a href="b_calendar.html">Store Calendar</a></li>
+                <li><a href="b_train.html">Markup Training</a></li>
+              </ul>
+            </li>
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamA<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="a_pcmut.html">PC Markup</a></li>
+                <li><a href="a_pc2fp.html">FP Convert</a></li>
+                <li class="divider"></li>
+                <li><a href="a_4lbtb.html">Lookback</a></li>
+                <li><a href="a_mmbranch.html">Mail Magazine</a></li>
+              </ul>
+            </li>
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Common<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="c_csvdf.html">CSV Define</a></li>
+                <li><a href="c_xl2tb.html">Tablize</a></li>
+                <li><a href="c_tb2dl.html">Table to DL</a></li>
+                <li><a href="c_bmlib.html">Bookmarklet</a></li>
+                <li class="divider"></li>
+                <li><a href="c_start.html">Introduction</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-right">
+            <li>
+              <div class="checkbox">
+                <label><input type="checkbox" id="displayProcedure">説明を表示する</label>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <!-- /navigation -->
+
+  </div>
+</nav><div id="info"></div>
+
+<section id="calendar">
+  <p class="procedure well">チームB施設営業時間を更新するためのツールです。<br>
+    <a href="https://www.b.example.com/dummy/" target="_blank">施設営業時間案内</a></p>
+  <h1 class="procedure"><span class="circle-text label-danger">1</span> 生成するカレンダーの種別を選ぶ</h1>
+  <form name="conv">
+    <div class="col-xs-5">
+      <div class="form-group">
+        <label>作成日付</label>
+        <input type="month" name="month" class="form-control">
+      </div>
+    </div>
+    <div class="col-xs-7">
+      <div class="form-group">
+        <label>カレンダーの種類</label>
+        <select class="form-control" name="calendarStyle">
+          <li><a href="c_csvdf.html">CSV Define</a></li>
+          <option value="empty" selected="selected">枠のみ</option>
+          <option value="general">Mチケット 一般窓口</option>
+          <option value="fanclub_counter">ファンクラブ窓口</option>
+          <option value="fanclub_booth">ファンクラブブース</option>
+          <option value="store_stadium">チームBストア A店</option>
+          <option value="store_museum">チームBストア B店</option>
+          <option value="store_station">チームBストア C店</option>
+          <option value="local_event">地域イベントカレンダー</option>
+        </select>
+      </div>
+    </div>
+    <button type="button" class="btn btn-danger btn-lg btn-block" style="margin: 10px 0" onclick="convertOrder()"><span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span> Convert &amp; Copy</button>
+    <h1 class="procedure"><span class="circle-text label-danger">2</span> カレンダーの内容を変更する</h1>
+    <div class="well procedure">
+      <p><strong>休業日・注釈の変更</strong> 日付をクリック</p>
+      <p><strong>開始時間・終了時間を変更</strong> OPEN・CLOSEをクリック(時間のみの場合は改行なしになります)</p>
+      <p>注釈部分は別の月を参考に手動で作成してください。</p>
+    </div>
+    <div class="row">
+      <div class="col-lg-7">
+        <div id="output" class="panel panel-default center-block" style="visibility: hidden; opacity: 0;">
+          <div class="panel-heading">簡易プレビュー</div>
+          <div class="panel-body">
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <h1 class="procedure"><span class="circle-text label-danger">3</span> ソースをコピーして貼り付け</h1>
+        <div class="well procedure">
+          <p>以下のテキストエリアにカレンダーの編集内容が反映されています。<br>
+            ソースをコピーして、CMSエクスプローラから各ブロックに登録してください。</p>
+        </div>
+        <textarea name="after" class="form-control" rows="6" placeholder="PC/SP版ソース"></textarea>
+        <textarea name="afterFp" class="form-control" rows="6" placeholder="FP版ソース"></textarea>
+      </div>
+    </div>
+  </form>
+
+  <div id="replaceLogArea"></div>
+  <div class="well">
+    <p><strong>変換 + コピー : </strong>PC版ソースにフォーカスして Shift + Enter</p>
+    <p><strong>プレビューを更新する : </strong>FP版にフォーカスして Shift + Enter</p>
+    <strong>&lt;dt&gt; の変換方式を変える : </strong>DLのスタイル を変更してから変換する
+  </div>
+</section>
+<hr>
+<div class="row">
+  <div class="text-center text-muted">
+    Copyright &copy; 2017 &middot; Released under the MIT license &middot; Kaoru Yoshinaga
+  </div>
+</div>
+<hr>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script type="text/javascript" src="settings.txt"></script>
+<script type="text/javascript" src="projectb_store_calendar.txt"></script>
+<script type="text/javascript" src="project/stadium_open.txt"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript">
+  function generateProcess() {
+    /** 出力するソース */
+    let str;
+
+    let calendarStyle = document.conv.calendarStyle.value;
+    tool.template = Convert.enableTemplate(settingsTemplate.storeCalendar.template, 4);
+
+    let targetDate = document.conv.month.value.split('-');
+    targetDate[1] = parseInt(targetDate[1]) - 1;
+    /** 入力フォームから取得した日付 */
+    let date = new Date(targetDate[0], targetDate[1], 1);
+
+    tool.targetYear = date.getFullYear() % 100;
+
+    log(tool.template);
+
+    tool.items = [];
+
+    //対象月前
+    let otherMonthCount = parseInt(date.getDay() - 2, 10);
+    if (otherMonthCount < 0) { otherMonthCount += 7 }
+    date.setDate(- parseInt(otherMonthCount, 10));
+    for (let i = otherMonthCount; i > -1; i--) {
+
+
+      log('Date: ' + (date.getMonth() + 1) + '/' + date.getDate());
+      log(date.getDate());
+      tool.items.push({
+        month: date.getMonth() + 1,
+        date: date.getDate(),
+        day: date.getDay(),
+        type: 'otherMonth',
+      });
+      log(tool.items)
+      date.setDate(date.getDate() + 1);
+    }
+
+    /** DATE型を受け取って時間を描画する */
+    function getTargetTime(targetTime, diffMinutes) {
+      let _date = new Date(targetTime.getTime());
+      if (typeof diffMinutes !== 'undefined') {
+        _date.setMinutes(_date.getMinutes() + diffMinutes);
+      }
+      return _date.getHours() + ':' + ('0' + _date.getMinutes()).slice(-2);
+    }
+    //対象月の日付
+    while (date.getMonth() === targetDate[1]) {
+      let target = {
+        month: date.getMonth() + 1,
+        date: date.getDate(),
+        day: date.getDay(),
+      };
+      if (typeof tool.stadiumOpens[target.month][target.date] !== 'undefined') {
+        target.time = tool.stadiumOpens[target.month][target.date];
+      }
+
+      /** 走査日のデフォルトの値 */
+      let item = {
+        month: date.getMonth() + 1,
+        date: date.getDate(),
+        day: date.getDay(),
+        type: 'date',
+        open_head: '01',
+        open: '10:00',
+        close_head: '01',
+        close: '18:00',
+        notes: '',
+      };
+
+      // [日程規則] 一般窓口
+      if (calendarStyle === 'general') {
+        if (typeof target.time === 'undefined') {
+          item.type = 'closeDay';
+        } else {
+          item.type = 'date';
+          item.open = getTargetTime(target.time.open, -30);
+          item.close_head = '02';
+          item.close = '7回裏終了まで';
+        }
+      }
+
+      // [日程規則] ファンクラブ窓口
+      if (calendarStyle === 'fanclub_counter') {
+        if (typeof target.time === 'undefined') {
+          if (target.day === 1) {
+            item.type = 'closeDay';
+          } else {
+            item.type = 'date';
+            item.open = '10:00';
+            item.close = '17:00';
+          }
+        } else {
+          log(target.time.open);
+          item.open_head = '02';
+          item.open = '前売券販売10:00<br>\n当日券販売' + getTargetTime(target.time.open, -60);
+          item.close_head = '02';
+          item.close = '試合終了30分後';
+        }
+      }
+
+      // [日程規則] ファンクラブブース
+      if (calendarStyle === 'fanclub_booth') {
+        if (typeof target.time === 'undefined') {
+          item.type = 'closeDay';
+        } else {
+          item.type = 'date';
+          item.open_head = '02';
+          if (target.time.game.getHours() === 18) {
+            item.open = '入会受付' + getTargetTime(target.time.game, -195) + '<br>\n来場登録' + getTargetTime(target.time.open, -60);
+          } else {
+            item.open = '入会受付' + getTargetTime(target.time.game, -210) + '<br>\n来場登録' + getTargetTime(target.time.open, -60);
+          }
+          item.close_head = '02';
+          item.close = '試合終了30分後';
+        }
+      }
+
+      // [日程規則] チームBストア A店
+      if (calendarStyle === 'store_stadium') {
+        if (typeof target.time === 'undefined') {
+          item.type = 'closeDay';
+        } else {
+          item.type = 'date';
+          item.open = getTargetTime(target.time.open);
+          item.close_head = '02';
+          item.close = '試合終了30分後';
+        }
+      }
+
+      // [日程規則] チームBストア B店
+      if (calendarStyle === 'store_museum') {
+        if (typeof target.time === 'undefined') {
+          if (target.day === 6 || target.day === 0) {
+            item.type = 'date';
+            item.open = '11:00';
+            item.close_head = '02';
+            item.close = '試合終了30分後';
+          } else {
+            item.type = 'closeDay';
+          }
+        } else {
+          item.type = 'date';
+          if (target.time.open.getHours() < 17) {
+            item.open = '10:00';
+          } else {
+            item.open = '13:00';
+          }
+          item.close_head = '02';
+          item.close = '試合終了30分後';
+        }
+      }
+
+      // [日程規則] チームBストア C店
+      if (calendarStyle === 'store_station') {
+        item.type = 'date';
+        item.open = '10:00';
+
+        if (typeof target.time === 'undefined') {
+          item.close = '20:00';
+        } else if (target.time.game.getHours() === 17) {
+          item.close = '21:00';
+        } else if (target.time.game.getHours() > 17) {
+          item.close = '22:00';
+        } else {
+          item.close = '20:00';
+        }
+      }
+
+      // [日付規則] 地域イベントカレンダー 初期設定
+      if (calendarStyle === 'local_event') {
+        item.type = 'local';
+        item.event = 'クリックでイベントを変更します';
+        item.event_id = tool.targetYear + ('0' + target.month).slice(-2) + ('0' + target.date).slice(-2);
+      }
+
+      if (calendarStyle === 'empty') {
+        item.type = 'date';
+        item.open = '';
+        item.close = '';
+      }
+
+      tool.items.push(item);
+      date.setDate(date.getDate() + 1);
+    }
+
+    //対象月後
+    otherMonthCount = 7 - date.getDay();
+    if (otherMonthCount > 6) { otherMonthCount -= 7 }
+    for (let i = otherMonthCount; i > - 1; i--) {
+      //log('Date: ' + (date.getMonth() +1) + '/' + date.getDate());
+      tool.items.push({
+        month: date.getMonth() + 1,
+        date: date.getDate() || 7,
+        day: date.getDay(),
+        type: 'otherMonth',
+      });
+      date.setDate(date.getDate() + 1);
+    }
+
+    str = getCalendarSource();
+
+    return str;
+  }
+
+  function outputFilter(str) {;
+    let dateCount = -1;
+    return str.replace(new RegExp(tool.template.header + '([\\s\\S]*?)' + tool.template.footer), (_all) => {
+      //return _all.replace(/(<td[^>]*>\s*<p class="web-schedule-date")>/g, '$1 onclick="alert(' + dateCount +')">');
+      return _all
+      .replace(/(<td[^>]*>)([\s\S]*?)(<\/td>)/g, (__all, _first, _inner, _latter) => {
+        dateCount++;
+        return _first + _inner
+        .replace(new RegExp(tool.template.dateTag, 'g'), (_dateTag) => {
+          return _dateTag.replace(/>$/, ' onclick="changeData(' + dateCount + ' , \'type\')">');
+        })
+        .replace(/<li class="web-open-time-\d{2}">/, (_dateTag) => {
+          return _dateTag.replace(/>$/, ' id="change_open' + dateCount + '" onclick="changeData(' + dateCount + ', \'open\', this);">');
+        })
+        .replace(/<li class="web-open-time-\d{2}">/, (_dateTag) => {
+          return _dateTag.replace(/>$/, ' id="change_close' + dateCount + '" onclick="changeData(' + dateCount + ', \'close\', this);">');
+        })
+        .replace(/<a href="#\d{6}_01">/, (_dateTag) => {
+          return _dateTag.replace(/>$/, ' id="change_event' + dateCount + '" onclick="changeData(' + dateCount + ', \'event\', this);">');
+        })
+        + _latter;;
+      });
+    });
+  }
+
+  var tool = new ConverterPage({ outputFilter: outputFilter });
+  window.addEventListener('DOMContentLoaded', function() {
+    document.conv.month.value = Module.getNow('yyyy-')+('0'+(new Date().getMonth()+2)).slice(-2);
+
+    let mss = {};
+
+    /** 球場開場時間 tool.stadiumOpens[month][day] */
+    tool.stadiumOpens = [];
+    let targetDate = document.conv.month.value.split('-');
+    targetDate[1] = parseInt(targetDate[1]) - 1;
+
+    mss.stadiumOpens = settingsTemplate.stadiumOpen.match(/\d{1,2}月[\s\S]*?(?=\d{1,2}月)/g);
+    mss.stadiumOpens.forEach((_month) => {
+      let _monthId = parseInt(_month.match(/^(\d{1,2})月/)[1], 10);
+      let _daysMs = _month.match(/\d{1,2}日\(.*?\)[\s\S]*?\n\n/g);
+      let _days = {};
+      if (_daysMs === null) {}
+      _daysMs.forEach((_text) => {
+        let _dayId = (_text.match(/(\d{1,2})日/)||['', 0])[1];
+
+        let _match = _text.matchGroup(/(\d{1,2})時(\d{2})分試合開始/, 2);
+        _days[_dayId] = {};
+        _days[_dayId].game = new Date(targetDate[0], targetDate[1], 1, _match[0], _match[1]);
+        _match = _text.matchGroup(/\((\d{1,2})時(\d{2})分開場\)/, 2);
+        _days[_dayId].open = new Date(targetDate[0], targetDate[1], 1, _match[0], _match[1]);
+      });
+      tool.stadiumOpens[_monthId] = _days;
+    });
+    log('開場時間',tool.stadiumOpens);
+  });
+
+  function changeData(itemId, target, node) {
+    log(target);
+    log(tool.items[itemId]);
+
+    if (target === 'type') {
+      if (tool.items[itemId].type === 'holiday') {
+        tool.items[itemId].type = 'date';
+      } else if (tool.items[itemId].type === 'closeDay') {
+        tool.items[itemId].type = 'holiday';
+      } else if (tool.items[itemId].type === 'local') {
+        tool.items[itemId].type = 'localEvent';
+      } else if (tool.items[itemId].type === 'localEvent') {
+        tool.items[itemId].type = 'localEventRed';
+      } else if (tool.items[itemId].type === 'localEventRed') {
+        tool.items[itemId].type = 'local';
+      } else if (tool.items[itemId].notes === '') {
+        tool.items[itemId].notes = '※1';
+      } else if (tool.items[itemId].notes === '※1') {
+        tool.items[itemId].notes = '※2';
+      } else if (tool.items[itemId].notes === '※2') {
+        tool.items[itemId].notes = '';
+        tool.items[itemId].type = 'closeDay';
+      }
+
+
+      tool.after.value = getCalendarSource();
+      tool.finish(tool.items[itemId].month + '/' + tool.items[itemId].date + 'のステータスを変更しました。');
+    }
+    if (target === 'open') {
+      log(node);
+      node.outerHTML = '<li class="web-open-time-02"><textarea id="changeItem">' + tool.items[itemId].open + '</textarea></li>';
+      let changeItem = document.getElementById('changeItem');
+      changeItem.focus();
+      changeItem.addEventListener('blur', () => {
+        tool.items[itemId].open = changeItem.value.replace(/\s+$/, '');
+        tool.items[itemId].open_head = /^\d{1,2}:\d{2}$/.test(tool.items[itemId].open) ? '01' : '02';
+        log(tool.items[itemId].open_head);
+        tool.after.value = getCalendarSource();
+        tool.finish(tool.items[itemId].month + '/' + tool.items[itemId].date + 'の開始時間に変更を加えました。');
+      });
+    }
+    if (target === 'close') {
+      log(node);
+      node.outerHTML = '<li class="web-open-time-02"><textarea id="changeItem">' + tool.items[itemId].close + '</textarea></li>';
+      let changeItem = document.getElementById('changeItem');
+      changeItem.focus();
+      changeItem.addEventListener('blur', () => {
+        tool.items[itemId].close = changeItem.value.replace(/\s+$/, '');
+        tool.items[itemId].close_head = /^\d{1,2}:\d{2}$/.test(tool.items[itemId].close) ? '01' : '02';
+        log(tool.items[itemId].close_head);
+        tool.after.value = getCalendarSource();
+        tool.finish(tool.items[itemId].month + '/' + tool.items[itemId].date + 'の終了時間に変更を加えました。');
+      });
+    }
+    if (target === 'event') {
+      log(node);
+      node.outerHTML = '<li class="web-open-time-02"><textarea id="changeItem">' + tool.items[itemId].event + '</textarea></li>';
+      let changeItem = document.getElementById('changeItem');
+      changeItem.focus();
+      changeItem.addEventListener('blur', () => {
+        tool.items[itemId].event = changeItem.value.replace(/\s+$/, '');
+        tool.after.value = getCalendarSource();
+        tool.finish(tool.items[itemId].month + '/' + tool.items[itemId].date + 'のイベント名に変更を加えました。');
+      });
+    }
+  }
+
+  function getCalendarSource() {
+    let str = tool.template.header;
+    let strFp = '';
+    let fpTerms = {}, _term = '';
+
+    //日付の書き出し (日数分ループ)
+    for (itemId in tool.items) {
+      let item = tool.items[itemId];
+      item.class = '01';
+      if (item.day === 1) { str += tool.template.trStart; }
+
+      //FPのグループ登録
+      if (item.type !== 'otherMonth' && item.type !== 'closeDay') {
+        _term = item.open + '～' + item.close;
+        if (typeof fpTerms[_term] === 'undefined') {
+          fpTerms[_term] = [item.date];
+        } else {
+          fpTerms[_term].push(item.date);
+        }
+      }
+
+      str += tool.template[item.type].replace(/{:(.*?)}/g, (_all, _itemId) => {
+        if (typeof item[_itemId] !== 'undefined') {
+          return item[_itemId];
+        } else {
+          return _all;
+        }
+      });
+      if (item.day === 7) { str += tool.template.trClose; }
+    }
+
+    str += tool.template.footer;
+
+    //配列のグループをソートする (終了日時を小数点以下に入れる)
+    log(fpTerms);
+    Object.keys(fpTerms).sort((_t, _b) => {
+      console.log(_t[0]);
+      if (/[\D]/.test(_t[0])) { _t = '10000.' + _t.replace(/[.～〜]/g, ''); }
+      if (/[\D]/.test(_b[0])) { _b = '10000.' + _b.replace(/[.～〜]/g, ''); }
+      if (typeof _t !== 'number') { _t = parseFloat(_t.replace(/[～〜]/, '.').replace(/\.(\d):/, '.0$1:').replace(/[^\d.]/g,'')); }
+      if (typeof _b !== 'number') { _b = parseFloat(_b.replace(/[～〜]/, '.').replace(/\.(\d):/, '.0$1:').replace(/[^\d.]/g,'')); }
+      console.log(_t,_b);
+      if(_t < _b) {return;}
+      if(_t > _b) {return 1;}
+      return 0;
+    });
+
+    for(_term in fpTerms) {
+      let itemFp = {
+        term: _term,
+        dates: fpTerms[_term].join(',')
+      };
+      strFp += tool.template.fpTerm.replace(/{:(.*?)}/g, (_all, _itemId) => {
+        if (typeof itemFp[_itemId] !== 'undefined') {
+          return itemFp[_itemId];
+        } else {
+          return _all;
+        }
+      });
+    }
+
+    document.conv.afterFp.value = strFp;
+
+    return str;
+  }
+
+  //Convert Order
+  function convertOrder() {
+    var str  = "";
+    str = generateProcess();
+    str = Convert.proof(str, 'b');
+    str = Convert.mark(str);
+    tool.after.value = str;
+    tool.finish('変換してクリップボードにコピーしました。', str);
+  }
+</script>
+</body>
+</html>

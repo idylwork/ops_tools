@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Game Result</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link href="css/bparts.css" rel="stylesheet">
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+      <span class="navbar-brand">B-RESULTS</span>
+    </div>
+    <!-- navigation -->
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="nav navbar-nav">
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamB<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="b_pcmut.html">PC Markup</a></li>
+                <li><a href="b_pc2fp.html">FP Convert</a></li>
+                <li><a href="b_project.html">Project Automation</a></li>
+                <li><a href="b_results.html">Game Result</a></li>
+                <li><a href="b_calendar.html">Store Calendar</a></li>
+              </ul>
+            </li>
+
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamA<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="a_pcmut.html">PC Markup</a></li>
+                <li><a href="a_pc2fp.html">FP Convert</a></li>
+                <li class="divider"></li>
+                <li><a href="a_4lbtb.html">Lookback</a></li>
+                <li><a href="a_mmbranch.html">Mail Magazine</a></li>
+              </ul>
+            </li>
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Common<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="c_csvdf.html">CSV Define</a></li>
+                <li><a href="c_xl2tb.html">Tablize</a></li>
+                <li><a href="c_tb2dl.html">Table to DL</a></li>
+                <li><a href="c_bmlib.html">Bookmarklet</a></li>
+                <li class="divider"></li>
+                <li><a href="c_start.html">Introduction</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-right">
+            <li>
+              <div class="checkbox">
+                <label><input type="checkbox" id="displayProcedure">説明を表示する</label>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <!-- /navigation -->
+
+  </div>
+</nav><div id="info"></div>
+
+
+<section id="results">
+  <p class="procedure well">チームBから送られてくる試合結果のエクセル原稿からニュースとコラムのソースを生成するツールです。</p>
+  <h1 class="procedure"><span class="circle-text label-info">1</span> Excel原稿をダウンロードし、全選択してコピー</h1>
+  <h1 class="procedure"><span class="circle-text label-info">2</span> プルダウンで試合種別を選択</h1>
+  <h1 class="procedure"><span class="circle-text label-info">3</span> 原稿エリアに貼り付けて変換</h1>
+  <form name="conv">
+    <textarea name="before" class="form-control" rows="6" placeholder="Excel原稿を全選択してコピー"></textarea>
+    <button type="button" class="btn btn-info btn-lg btn-block" style="margin: 10px 0" onclick="convertOrder()"><span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span> Convert &amp; Copy</button>
+    <div class="container">
+      <div class="col-xs-3">
+        <button type="button" class="btn btn-default btn-lg btn-block" style="margin: 10px 0" onclick="tool.refreshOrder()"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 更新</button>
+        <p class="procedure">PC/SP版ソースの内容からFP版ソースとコラム用ソースを生成しなおします</p>
+      </div>
+      <div class="col-xs-2">
+        <button type="button" class="btn btn-default btn-lg btn-block" onclick="tool.copy(tool.after.value, 'クリップボードにPC/SPのソースをコピーしました。')"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span> Copy PC/SP</button>
+        <p class="procedure">PC/SP版ソースの内容をコピー</p>
+      </div>
+      <div class="col-xs-2">
+        <button type="button" class="btn btn-default btn-lg btn-block" onclick="tool.copy(tool.afterAlt.value), 'クリップボードにFPのソースをコピーしました。'"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span> Copy FP</button>
+        <p class="procedure">FP版ソースの内容をコピー</p>
+      </div>
+      <div class="col-xs-2">
+        <div class="checkbox">
+          <label><input type="checkbox" name="statsAlt" value="">別のスタッツ表を使う</label>
+          <p class="procedure">相手チームのスタッツが取得されてしまう場合に入れ替えを行う
+        </div>
+      </div>
+      <div class="col-xs-3">
+        <div class="form-group">
+          <label>試合種別</label>
+          <select class="form-control" id="gameMode" name="gameMode">
+            <option value="league" selected="selected">リーグA</option>
+            <option value="practice">練習試合</option>
+            <option value="league4">D</option>
+            <option value="intrasquad">紅白戦</option>
+          </select>
+        </div>
+        <p class="procedure">試合の種別を選択します</p>
+      </div>
+
+    </div>
+
+    <div id="replaceLogArea"></div>
+    <div id="output" class="panel panel-default center-block" style="visibility: hidden; opacity: 0;">
+      <div id="titlePreview" class="panel-heading">簡易プレビュー</div>
+      <div class="panel-body">
+      </div>
+      <div class="panel-notice">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-7">
+        <h1 class="procedure"><span class="circle-text label-info">3</span> 内容を確認して修正する</h1>
+        <p class="procedure">PC版のソースを変更した場合には、Shift + Enter でFP版とコラムに変更を反映できます。</p>
+        <textarea name="after" class="form-control" rows="12" placeholder="PC/SP版ソース"></textarea>
+      </div>
+      <div class="col-xs-5">
+        <textarea name="afterAlt" class="form-control" rows="6" placeholder="FP版ソース" style="margin-bottom: 20px;"></textarea>
+        <div id="afterColTitle"></div>
+        <textarea name="afterCol" class="form-control" rows="4" placeholder="コラム用ソース"></textarea>
+        <div class="well">
+          <p class="procedure">ニュースは更新コードが利用できます。コラムは本文のみ生成するため、手動で対応してください。</p>
+          <div class="form-group">
+            <label>更新コード (試合結果ニュース)</label>
+            <div class="input-group">
+              <input type="text" name="newsCode1" class="form-control">
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" onclick="tool.copy(this.parentNode.previousElementSibling.value)">コピー</button>
+              </span>
+            </div>
+            <p class="procedure">更新コード入力ブックマークレットを使用して試合結果ニュースを作成します</p>
+          </div>
+          <div class="form-group">
+            <label>更新コード (配信コンテンツニュース)</label>
+            <div class="input-group">
+              <input type="text" name="newsCode2" class="form-control">
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" onclick="tool.copy(this.parentNode.previousElementSibling.value)">コピー</button>
+              </span>
+            </div>
+            <p class="procedure">更新コード入力ブックマークレットを使用して配信コンテンツ情報ニュースを作成します</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="well">
+    <p>デバイス : PC SP FP</p>
+    <p>カテゴリ : ファーム</p>
+    <p>スゴ得に表示する : On</p>
+    <hr>
+    <p><strong>変換 + コピー : </strong>Excelソースにフォーカスして Shift + Enter</p>
+    <p><strong>プレビューを更新する : </strong>PC版にフォーカスして Shift + Enter</p>
+    <strong>相手チームのスタッツが表示されるとき : </strong>別のスタッツ表を使うをチェック
+  </div>
+</section>
+<hr>
+<div class="row">
+  <div class="text-center text-muted">
+    Copyright &copy; 2017 &middot; Released under the MIT license &middot; Kaoru Yoshinaga
+  </div>
+</div>
+<hr>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script type="text/javascript" src="settings.txt"></script>
+<script type="text/javascript" src="project/b_results.txt"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript">
+  function outputFilter(str) {
+    return str.replace(/(<th class="web-text-left">チームB バッテリー<\/th>\s[\s\n]*<td>.*?)<\/td>/, '$1<br>\n<div class="panel-confirm">' + confirmInfo('battery') + '</div></td>')
+    .replace(/(<th class="web-text-left">チームB 本塁打<\/th>\s[\s\n]*<td>.*?)<\/td>/, '$1<br>\n<div class="panel-confirm">' + confirmInfo('homerun') + '</div></td>')
+    .replace(/<img [^>]*?xh_([^>]*?)\.jpg"[^>]*?>/g, '<div class="dummy-img">xh_$1.jpg</div>');
+  }
+  var tool = new ConverterPageFarm({ outputFilter: outputFilter });
+
+  var convertProcess = function (str) {
+    /** 試合種別 */
+    let gameMode = document.conv.gameMode.value;
+    localStorage['b_results.gamemode'] = gameMode;
+
+    /** 取得データ配列 */
+    let items = [];
+    /** 出力データ */
+    let blocks = [];
+    /** サヨナラゲームか否か {bool} */
+    let sayonara = -1;
+    /** match関数用の一時変数 */
+    let _matches;
+
+    /** 原稿テーブル中の特定テーブル開始位置 */
+    let tableRow = { batter: [], pitcher: [] };
+    /** 原稿テーブル */
+    let table = [];
+    str = Convert.alphanumeric(str);
+    str = Convert.htmlSpecialChars(str);
+    let rows = str.split('\n');
+    if (rows.length < 96) {
+      for (let i = rows.length; i < 96; i++) { rows.push(""); }
+    }
+    rows.forEach((_row, _rowId) => {
+      table[_rowId] = _row.split('\t');
+      if (table[_rowId].length < 34) {
+        for (let i = table[_rowId].length; i < 34; i++) { table[_rowId].push(""); }
+      }
+      if (table[_rowId][2] === '投手名') {
+        tableRow.pitcher.push(_rowId + 1);
+      } else if (table[_rowId][0] === '打順') {
+        tableRow.batter.push(_rowId + 1);
+      }
+    });
+
+    if (tableRow.batter.length === 0) { tableRow.batter[0] = 15; }
+    if (tableRow.pitcher.length === 0) { tableRow.pitcher[0] = 45; }
+
+    console.table(tableRow);
+    //console.table(table);
+
+    /** 原稿成型メソッド */
+    let mold = {
+      team: (arg) => {
+        log(arg);
+        if (typeof tool.team0[arg] === 'undefined') {
+          tool.team0['Ot'] = arg;
+          tool.team1['Ot'] = arg;
+          tool.team2['Ot'] = arg.charAt(0).replace(/([ア-ン])/, '$1 ');
+          return 'Ot';
+        }
+        return arg;
+      },
+      score: (arg) => {
+        return arg.replace(' ', '').replace('×', 'X');
+      },
+      battery: (battery) => {
+        battery = battery.replace(/^[PＰ] ?　/, '')
+          .replace(/→/g, '-')
+          .replace(/　[CＣ]　/, '=')
+          .replace(/\s/g, '')
+          .replace(/〇/g, '○');
+        return tool.proofPlayer(battery);
+      },
+      homerun: (homerun) => {
+        homerun = homerun.replace(/\s*$/, '')
+          .replace(/(.*?)(\d{1,2}号.{1,4}||)\((\d{1,2}回).*?\)/g, '$1 $2($3)')
+          .replace(/(.*?)(\dラン||ソロ||満塁) \((\d{1,2}回).*?\)/g, '$1 $2($3)');
+        return tool.proofPlayer(homerun);
+      }
+    }
+
+    /** 日付 e.g. m:12, d:31, day:'日' */
+    items.dates = [];
+    _matches = table[0][1].match(/(\d{1,2})月(\d{1,2})日/);
+    if (!_matches) {
+      tool.error.push('日付を取得できなかったため、本日の日付に設定しました。(' + items.dates + '→' + Module.getNow('m/d') + ')');
+      _matches = ['no match', Module.getNow('b'), Module.getNow('d')];
+    }
+
+    items.dates = {
+      m: _matches[1],
+      d: _matches[2],
+      day: table[0][3],
+      mm: ('0' + _matches[1]).slice(-2),
+      dd: ('0' + _matches[2]).slice(-2),
+    }
+
+    let dateTarget = new Date(settings.thisyear, items.dates.m-1, items.dates.d);
+    let correctDay = ['日','月','火','水','木','金','土'][dateTarget.getDay()];
+    if (items.dates.day !== correctDay) {
+      tool.error.push('曜日が違っているため、正しい曜日に修正しました。(' + items.dates.day + '→' + correctDay + ')');
+      items.dates.day = correctDay;
+    }
+
+    /** 球場 */
+    items.location = table[0][5];
+    if (tool.location[items.location]) {
+      tool.error.push('球場名を変更しました。(' + items.location + '→' + tool.location[items.location] + ')');
+      items.location = tool.location[items.location];
+    }
+
+    /** チーム (アルファベット1～2文字) */
+    items.teamId = [mold.team(table[4][2]), mold.team(table[6][2])];
+    let teamBNum, opponentNum;
+    if(items.teamId[0] == 'b') {
+      teamBNum = 0, opponentNum = 1;
+    } else {
+      teamBNum = 1, opponentNum = 0;
+    }
+    /** ランニングスコア {string} (添え字=イニング数は0始まり) */
+    items.scores = [[],[]];
+    for (let i = 0; i < 12; i++) {
+      items.scores[0][i] = mold.score(table[4][i*2+3]);
+      items.scores[1][i] = mold.score(table[6][i*2+3]);
+      if(/\d[×xX]/.test(items.scores[1][i])) { sayonara = 1; }
+    }
+    /** 得点合計 {int} */
+    items.sums = [mold.score(table[4][27]), mold.score(table[6][27])];
+    for (var i = 0; i < 2; i++) {
+      items.sums[i] = parseInt(items.sums[i], 10);
+      if (!items.scores[i][8]){
+        tool.error.push(tool.team1[items.teamId[i]] + 'のイニング数が不足しています。');
+      }
+      if (Module.sumArray(items.scores[i]) != items.sums[i]) {
+        tool.error.push(tool.team1[items.teamId[i]] + 'のスコア合計が違うため変更しました。(' + items.sums[i] + '→' + Module.sumArray(items.scores[i]) + ')');
+        items.sums[i] = Module.sumArray(items.scores[i]);
+      }
+    }
+    /** バッテリー items.batterys[teamBNum]でチームBのバッテリー */
+    items.batteries = [mold.battery(table[10][3]), mold.battery(table[11][3])];
+
+    /** バッテリーチーム (未使用) */
+    //items.batteryIds = [table[10][2], table[11][2]];
+
+    /** 本塁打 */
+    items.homeruns = ['なし', 'なし'];
+
+    if (gameMode === 'intrasquad') {
+      _matches = table[12][3].match(/[紅](.*?)(?=\s+[白][ 　]|$)/);
+      log(_matches);
+
+      if (_matches) {
+        items.homeruns[0] = mold.homerun(_matches[1]);
+      }
+      log(_matches);
+      _matches = table[12][3].match(/[白](.*?)(?=\s+[紅][ 　]|$)/);
+      if (_matches) {
+        items.homeruns[1] = mold.homerun(_matches[1]);
+      }
+    } else { //通常種別の本塁打
+      _matches = table[12][3].match(/M[ 　](.*?)(?=\s+[A-Z]{1,2}[ 　]|$)/);
+      if (_matches) {
+        items.homeruns[teamBNum] = mold.homerun(_matches[1]);
+      }
+      _matches = table[12][3].match(/[^)\sM]{1,2}[ 　](.*?)$/);
+      if (_matches) {
+        items.homeruns[opponentNum] = mold.homerun(_matches[1]);
+      }
+    }
+    log(teamBNum,opponentNum,items.homeruns);
+    //console.table(items);
+
+    if(!items.scores[0][0]) {
+      tool.error.push('データの形式が合わないため、スコア情報を取得できませんでした。');
+    }
+
+    /** 試合結果 */
+    blocks.result = "";
+    if (gameMode === 'intrasquad') {
+      blocks.result = '紅' + items.sums[0] + '-' + items.sums[1] + '白';
+    } else {
+      if (items.sums[teamBNum] > items.sums[opponentNum]) {
+        blocks.result += '○';
+      } else if (items.sums[teamBNum] < items.sums[opponentNum]) {
+        blocks.result += '●';
+      }
+      blocks.result += items.sums[teamBNum];
+      if(sayonara == teamBNum) {
+        blocks.result += 'x';
+      }
+      blocks.result +=  '-' + items.sums[opponentNum];
+      if(sayonara == opponentNum) {
+        blocks.result += 'x';
+      }
+    }
+
+    /** タイトル */
+    if (gameMode === 'intrasquad') {
+      blocks.title = items.dates.m + '/' + items.dates.d + '(' + items.dates.day + ') '
+        + tool.league[gameMode]
+    } else {
+      blocks.title = items.dates.m + '/' + items.dates.d + '(' + items.dates.day + ') '
+        + tool.league[gameMode]
+        + ' vs' + tool.team0[items.teamId[opponentNum]];
+    }
+
+    document.getElementById('titlePreview').innerHTML = blocks.title;
+
+    /** リード文ブロック */
+    blocks.lead = "";
+    if (gameMode === 'intrasquad') {
+      blocks.lead += '<div class="web-text-block">\n  <p>' + items.dates.m + '月' + items.dates.d + '日(' + items.dates.day + ')' + items.location + 'で行われた試合結果をお伝えします。</p>\n</div>\n';
+      blocks.lead += '<div class="web-containerB">\n  <div class="web-image-container02">\n    <figure><img src="/images/' + settings.thisyear + '/' + items.dates.mm + '/' + items.dates.dd + '/xh_game01.jpg" alt="DUMMY"></figure>\n  </div>\n  <div class="web-image-container02">\n    <figure><img src="/images/' + settings.thisyear + '/' + items.dates.mm + '/' + items.dates.dd + '/xh_game02.jpg" alt="DUMMY"></figure>\n  </div>\n</div>\n\n';
+
+    } else {
+      blocks.lead += '<div class="web-text-block">\n  <p>' + items.dates.m + '月' + items.dates.d + '日(' + items.dates.day + ')' + items.location + 'で行われた対' + tool.team0[items.teamId[opponentNum]] + '戦の試合結果をお伝えします。</p>\n</div>\n\n';
+    }
+
+    /** PC/SPニュースソース */
+    let source = blocks.lead + '<table class="web-score-table-01">\n  <thead>\n    <tr>\n      <th>TEAM</th>\n';
+    for (var i = 1; i < 13; i++) {
+      source += '      <th>' + i + '</th>\n';
+    }
+    source += '      <th>R</th>\n    </tr>\n  </thead>\n  <tbody>\n'
+    for (var j = 0; j < 2; j++) { //2チームループ
+      source += '    <tr>\n      <th>';
+      //チーム名表示
+      if (gameMode === 'intrasquad') {
+        source += tool.teamIntrasquad[j];
+      } else {
+        source += '<span class="forPC">' + tool.team1[items.teamId[j]] + '</span><span class="forSP">' + tool.team2[items.teamId[j]] + '</span>';
+      }
+      source += '</th>\n';
+      for (var i = 0; i < 12; i++) { //イニングループ
+        source += '      <td>' + items.scores[j][i] + '</td>\n';
+      }
+      source += '      <td>' + items.sums[j] + '</td>\n    </tr>\n';
+    }
+    source += '  </tbody>\n</table>\n\n';
+
+    if (gameMode === 'intrasquad') {
+      source += '<table class="web-table01 web-mb20">\n  <colgroup><col class="web-w-30"><col></colgroup>\n  <tbody>\n    <tr>\n      <th class="web-text-left">試合結果</th>\n      <td>' + blocks.result + '</td>\n    </tr>\n    <tr>\n      <th class="web-text-left">紅組バッテリー</th>\n      <td>' + items.batteries[0] + '</td>\n    </tr>\n    <tr>\n      <th class="web-text-left">白組バッテリー</th>\n      <td>' + items.batteries[1] + '</td>\n    </tr>\n    <tr>\n      <th class="web-text-left">紅組本塁打</th>\n      <td>' + items.homeruns[0] + '</td>\n    </tr>\n    <tr>\n      <th class="web-text-left">白組本塁打</th>\n      <td>' + items.homeruns[1] + '</td>\n    </tr>\n  </tbody>\n</table>\n';
+    } else {
+      source += '<table class="web-table01 web-mb20">\n  <colgroup><col class="web-w-30"><col></colgroup>\n  <tbody>\n    <tr>\n      <th class="web-text-left">試合結果</th>\n      <td>' + blocks.result + '</td>\n    </tr>\n    <tr>\n      <th class="web-text-left">チームB バッテリー</th>\n      <td>' + items.batteries[teamBNum] + '</td>\n    </tr>\n    <tr>\n      <th class="web-text-left">チームB 本塁打</th>\n      <td>' + items.homeruns[teamBNum] + '</td>\n    </tr>\n  </tbody>\n</table>\n\n';
+    }
+
+    //1イニングに10点以上入るとおかしく見える
+    let sourceFp = blocks.lead + '<br>\n<br>\n　 ';
+    for(var i = 0; i < 12; i++) {
+      if (i > 8 && !items.scores[0][i]) { break; }
+      if(i != 0 && i % 3 == 0) {
+        sourceFp += ' ';
+      }
+      _innings = (i < 9) ? i + 1 : i - 9;
+      sourceFp += _innings;
+    }
+    sourceFp += ' 計<br>\n'
+
+    for(var j = 0; j < 2; j++) {
+      sourceFp += tool.team2[items.teamId[j]] + '|';
+      for(var i = 0; i < 12; i++) {
+        if (i > 8 && !items.scores[0][i]) { break; }
+        if(i != 0 && i % 3 == 0) {
+          sourceFp += ' ';
+        }
+        sourceFp += items.scores[j][i];
+      }
+      sourceFp += '|'+ items.sums[j] + '<br>\n';
+    }
+
+    sourceFp += '<br>\n<font size="1">■</font>試合結果<br>\n' + blocks.result + '<br>\n<br>\n<font size="1">■</font>チームB バッテリー<br>\n' + items.batteries[teamBNum] + '<br>\n<br>\n<font size="1">■</font>チームB 本塁打<br>\n' + items.homeruns + '<br>\n<br>\n&gt;&gt;<a href="/farm/schedule.html">リーグ試合日程はこちら</a>\n';
+
+    let stats = [];
+
+    /**  */
+    let tagTh01 = ['        <th>', '</th>\n'],
+        tagTh02 = ['        <th class="web-bg-1">', '</th>\n'],
+        tagTd01 = ['        <td class="web-text-center">', '</td>\n'];
+
+    function statsBatter(_table, addText = "") {
+      let _result = '  <table class="web-table01 web-js-table-wrap">\n    <colgroup><col class="web-w-25"><col class="web-w-30"><col><col><col></colgroup>\n    <thead>\n      <tr>\n        <th colspan="2">' + addText + '打撃結果</th>\n        <th>打席</th>\n        <th>打数</th>\n        <th>安打</th>\n        <th>打点</th>\n      </tr>\n    </thead>\n    <tbody>\n';
+      _table.forEach((_stats) => {
+        if(_stats[2] === "") { return; }
+        let player = {
+          /** 打順 */
+          number: _stats[0],
+          /** 守備 */
+          position: _stats[1],
+          /** 名前 */
+          name: _stats[2],
+          /** 打席 */
+          pa: _stats[29] || 0,
+          /** 打数 */
+          bats: _stats[30] || 0,
+          /** 安打 */
+          hits: _stats[31] || 0,
+          /** 打点 */
+          rbi: _stats[32] || 0,
+        };
+
+        //console.table(player);
+
+        //守備位置
+        player.position = player.position.replace(tool.regPosition, function(_all) {
+          if(_all === 'PH' && player.position === 'PH') {
+            tool.error.push(tool.proofPlayerLong(player.name) + 'が代打後に指名打者についたかどうか確認してください。');
+            return '打指';
+          }
+          return tool.position[_all];
+        })
+          .replace(/,/g, '');
+        if (player.number) {
+          player.position = '(' + player.position + ')';
+        } else {
+          player.position = '-' + player.position;
+        }
+
+        //入力エラー検出
+        if(player.pa < player.bats) {
+          tool.error.push(tool.proofPlayerLong(player.name) + 'の打数が打席数を超えています。(' + player.pa + ' < ' + player.bats + ')');
+        }
+        if(player.bats < player.hits) {
+          tool.error.push(tool.proofPlayerLong(player.name) + 'の打席数が安打数を超えています。(' + player.bats + ' < ' + player.hits + ')');
+        }
+
+        //ソースへの追記
+        _result += '      <tr>\n'
+          + tagTh02[0] + player.position + tagTh02[1]
+          + tagTh02[0] + tool.proofPlayerLong(player.name, true) + tagTh02[1]
+          + tagTd01[0] + player.pa + tagTd01[1]
+          + tagTd01[0] + player.bats + tagTd01[1]
+          + tagTd01[0] + player.hits + tagTd01[1]
+          + tagTd01[0] + player.rbi + tagTd01[1]
+          + '      </tr>\n';
+      });
+      _result += '    </tbody>\n  </table>\n';
+      return _result;
+    }
+
+    /** 投手成績 */
+    function statsPitcher(_table, addText = "") {
+      let _result = '<table class="web-table01 web-js-table-wrap">\n    <colgroup><col class="web-w-25"><col class="web-w-15"><col class="web-w-10"><col class="web-w-10"><col class="web-w-10"><col class="web-w-10"><col class="web-w-10"><col class="web-w-10"></colgroup>\n    <thead>\n      <tr>\n        <th>' + addText + '投手結果</th>\n        <th>回数</th>\n        <th>被安打</th>\n        <th>被本塁打</th>\n        <th>奪三振</th>\n        <th>与四死球</th>\n        <th>失点</th>\n        <th>自責点</th>\n      </tr>\n    </thead>\n    <tbody>\n';
+
+      _table.forEach((_stats) => {
+        if(_stats[2] === "" || _stats[2] === "合　　計") { return; }
+        let player = {
+          /** 名前 */
+          name: _stats[2],
+          /** 回数 */
+          innings: _stats[3].replace(/\s/g, ''),
+          /** 被安打 */
+          hits: _stats[9],
+          /** 被本塁打(相手チーム本塁打より取得) */
+          homerun: 0,
+          /** 奪三振 */
+          so: _stats[11],
+          /** 四球(与四死球) */
+          bb: _stats[13],
+          /** 死球(与四死球) */
+          hbp: _stats[15],
+          /** 失点 */
+          runs: _stats[17],
+          /** 自責点 */
+          er: _stats[19] || 0,
+        };
+
+        //相手チームの本塁打の中からピッチャーの名前のマッチ数を探す
+        if (items.homeruns[opponentNum] !== 'なし') {
+          let _target = tool.proofPlayer(items.homeruns[opponentNum]);
+          _reg = new RegExp('回' + player.name.replace(/　.*$/, ''), 'g');
+          player.homerun = (_target.match(_reg) || []).length;
+        }
+        //console.table(player);
+
+        _result += '      <tr>\n'
+          + tagTh02[0] + tool.proofPlayerLong(player.name, true) + tagTh02[1]
+          + tagTd01[0] + player.innings + '回' + tagTd01[1]
+          + tagTd01[0] + player.hits + tagTd01[1]
+          + tagTd01[0] + player.homerun + tagTd01[1]
+          + tagTd01[0] + player.so + tagTd01[1]
+          + tagTd01[0] + (Number(player.bb) + Number(player.hbp)) + tagTd01[1]
+          + tagTd01[0] + player.runs + tagTd01[1]
+          + tagTd01[0] + player.er + tagTd01[1]
+          + '      </tr>\n';
+      });
+      _result += '    </tbody>\n  </table>\n';
+      return _result;
+    }
+
+    //フッター(リーグA日程)か個人成績を表示する
+    if (gameMode === 'intrasquad') {
+      source += '<div class="web-containerBA">\n';
+      source += statsBatter(table.slice(tableRow.batter[0], tableRow.batter[0]+27), '紅組');
+      source += statsBatter(table.slice(tableRow.batter[1], tableRow.batter[1]+27), '白組');
+      source += statsPitcher(table.slice(tableRow.pitcher[0], tableRow.pitcher[0]+9), '紅組');
+      source += statsPitcher(table.slice(tableRow.pitcher[1], tableRow.pitcher[1]+9), '白組');
+      source += '</div>\n';
+    } else if (gameMode !== 'league') {
+      source += '<div class="web-containerBA">\n';
+      if (document.conv.statsAlt.checked) {
+        tableRow.batter[0] = tableRow.batter[1];
+        tableRow.pitcher[0] = tableRow.pitcher[1];
+      }
+      source += statsBatter(table.slice(tableRow.batter[0], tableRow.batter[0]+27));
+      source += statsPitcher(table.slice(tableRow.pitcher[0], tableRow.pitcher[0]+9));
+      source += '</div>\n';
+    }
+
+    //フッター
+    if (gameMode === 'intrasquad') {
+      source += '<div class="web-text-block">\n  <p><a class="web-link-3" href="/team/' + settings.thisyear + 'springcamp/index.html?dat=' + settings.thisyear + items.dates.mm + '"><span>' + settings.thisyear + '春季キャンプ情報</span></a></p>\n</div>';
+    } else if (gameMode === 'league') {
+      source += '<div class="web-text-block">\n  <p><a class="web-link-3" href="/farm/schedule/"><span>リーグ試合日程はこちら</span></a></p>\n</div>';
+    } else if (gameMode === 'league4') {
+      source += '<div class="web-text-block">\n  <p><a class="web-link-3" href="/farm/' + settings.thisyear + 'league4/"><span>D・リーグ試合日程はこちら</span></a></p>\n</div>\n';
+      source += '<div class="web-text-block">\n  <p><a class="web-link-3 forSP" href="/column/list/00000001/0.html"><span>D・リーグ試合戦評はこちら(試合日翌日配信)</span></a></p>\n</div>';
+    }
+
+    str = source;
+
+    let newsDate = new Date(settings.thisyear, parseInt(items.dates.m, 10) - 1, parseInt(items.dates.d, 10) + 1);
+    items.newsDate = {
+      m: newsDate.getMonth(),
+      d: newsDate.getDate(),
+    }
+
+    tool.afterAlt.value = convertProcessFp(source);
+    tool.afterCol.value = convertProcessCol(tool.afterAlt.value);
+    document.getElementById('afterColTitle').innerHTML = '<span class="disable-select">コラム: </span><strong>vs' + tool.team0[items.teamId[opponentNum]] + '(' + items.location + ')</strong>';
+    return str;
+  }
+
+  // 完成したPCソースからFPソースを作成する
+  function convertProcessFp(str) {
+    let gameMode = document.conv.gameMode.value;
+
+    str = str.replace(/^\s+/gm, '')
+      .replace(/<\/?div.*?>/g, ''); //divは見出しで使用するので早めに
+
+    if (gameMode === 'intrasquad') {
+      //log(str);
+      str = str
+        .replace(/./, function(_all) {
+        return _all;
+      })
+        .replace(/<figure><img src="\/cmn\/images\/news\/([^"]*?)"[^>]*?><\/figure>/g, '<img src="/fitter/m/news/img/$1?cache=no&amp;size=100pw&amp;referrerSize=12000" alt="紅白戦写真"><br>\n')
+        .replace(/<th>([紅白])<\/th>/g, '<th><span class="forSP">$1<\/span></th>')
+        .replace(/<th class="web-text-left">試合結果<\/th>\n<td>(.*?)<\/td>/, '<br>\n<font size="1">■</font>試合結果<br>\n$1<br>\n<br>')
+        .replace(/<th class="web-text-left">紅組バッテリー<\/th>\n<td>(.*?)<\/td>[\s\S]*?<th class="web-text-left">白組バッテリー<\/th>\n<td>(.*?)<\/td>[\s\S]*?<th class="web-text-left">紅組本塁打<\/th>\n<td>(.*?)<\/td>[\s\S]*?<th class="web-text-left">白組本塁打<\/th>\n<td>(.*?)<\/td>/, '<span class="icon01">■</span>紅組バッテリー<br>\n$1<br>\n<br>\n<span class="icon01">■</span>白組バッテリー<br>\n$2<br>\n<br>\n<span class="icon01">■</span>紅組本塁打<br>\n$3<br>\n<br>\n<span class="icon01">■</span>白組本塁打<br>\n$4<br>\n<br>\n')
+      // 紅白打撃結果
+        .replace(/<th colspan="2">([紅白])組打撃結果<\/th>([\s\S]*?)<\/tbody>\n<\/table>/g, function(_all, _team, _data){
+        return _data.replace(/<th>打席<\/th>\n<th>打数<\/th>\n<th>安打<\/th>\n<th>打点<\/th>\n/, '<div class="hd_03">' + _team + '組打撃結果</div>\nポジション　　席打安点')
+          .replace(/<th class="web-bg-1">-(\S)<\/th>/g, '<th class="web-bg-1">-$1 <\/th>')
+          .replace(/<th class="web-bg-1">(.*?)<\/th>\n<th class="web-bg-1">(.*?)<\/th>\n/g, '$1$2')
+          .replace(/<td class="web-text-center">(\d+)<\/td>\n/g, ' $1')
+          .replace(/<\/tr>/g, '<br>\n')
+          + '<br>\n';
+      })
+      // 紅白投手結果
+        .replace(/<th>([紅白])組投手結果<\/th>([\s\S]*?)<\/tbody>\n<\/table>/g, function(_all, _team, _data){
+        return '<div class="hd_03">' + _team + '組投手結果</div>\n' + _data
+          .replace(/<th>回数<\/th>\n<th>被安打<\/th>\n<th>被本塁打<\/th>\n<th>奪三振<\/th>\n<th>与四死球<\/th>\n<th>失点<\/th>\n<th>自責点<\/th>\n<\/tr>/, '[打撃結果表記について]<br>\n席:打席数<br>打:打数<br>\n安:安打数<br>\n点:打点<br>\n<br>\n')
+          .replace(/<th class="web-bg-1">(.*?)<\/th>\n<td class="web-text-center">(.*?)<\/td>\n/g, '$1<br>\nイニング安本三四失責<br>\n$2')
+          .replace(/<td class="web-text-center">(\d+)<\/td>\n/g, ' $1')
+          .replace(/<\/tr>/g, '<br>\n<br>\n')
+          + '[表記について]<br>\n安:被安打数<br>\n本:被本塁打数<br>\n三:奪三振数<br>\n四:与四死球<br>\n失:失点<br>\n責:自責点<br>\n<br>\n';
+      });
+    }
+
+    return str
+      .replace(/<div class="web-text-block">\n<p>(.*?)<\/p>\n<\/div>/g, '$1<br>\n')
+      .replace(/<table class="web-table01 web-mb20">[\s\S]*?<tbody>/, '')
+      .replace(/<th>TEAM<\/th>[\s\S]*?<tbody>\s*?<tr>\n.*?<span class="forSP">(.*?)<\/span><\/th>\n<td>([\s\S]*?)<\/td>\n<td>(\d+)<\/td>\n<\/tr>\s*?<tr>\n.*?<span class="forSP">(.*?)<\/span><\/th>\n<td>([\s\S]*?)<\/td>\n<td>(\d+)<\/td>\n<\/tr>/, function(_all, _team0, _score0, _sum0, _team1, _score1, _sum1) {
+      var _scoreHd = "";
+      _score0 = _score0.split('</td>\n<td>').filter(function(e){return e !== "";});
+      _score1 = _score1.split('</td>\n<td>').filter(function(e){return e !== "";});
+      for (var i= 0; i < _score0.length; i++) {
+        if(i % 3 == 0 && i > 0){
+          _scoreHd += ' ';
+          _score0[i] = ' ' + _score0[i];
+          _score1[i] = ' ' + _score1[i];
+        }
+        _scoreHd += i + 1;
+      }
+      _score0 = _score0.join('');
+      _score1 = _score1.join('');
+      return '<br>\n　  ' + _scoreHd + ' 計<br>\n' + _team0 + '|' + _score0 + '|' + _sum0 + '<br>\n' + _team1 + '|' + _score1 + '|' + _sum1 + '<br>\n';
+    })
+      .replace(/<th class="web-text-left">試合結果<\/th>\n<td>(.*?)<\/td>/, '<br>\n<font size="1">■</font>試合結果<br>\n$1<br>\n<br>')
+      .replace(/<th class="web-text-left">チームB バッテリー<\/th>\n<td>(.*?)<\/td>[\s\S]*?<th class="web-text-left">チームB 本塁打<\/th>\n<td>(.*?)<\/td>/, '<span class="icon01">■</span>チームB バッテリー<br>\n$1<br>\n<br>\n<span class="icon01">■</span>チームB 本塁打<br>\n$2<br>\n<br>\n')
+    // 打撃結果
+      .replace(/<th colspan="2">打撃結果<\/th>([\s\S]*?)<\/tbody>\n<\/table>/, function(_all, _data){
+      return _data
+        .replace(/<th>打席<\/th>\n<th>打数<\/th>\n<th>安打<\/th>\n<th>打点<\/th>\n/, '<div class="hd_03">打撃結果</div>\nポジション　　席打安点')
+        .replace(/<th class="web-bg-1">-(\S)<\/th>/g, '<th class="web-bg-1">-$1 <\/th>')
+        .replace(/<th class="web-bg-1">(.*?)<\/th>\n<th class="web-bg-1">(.*?)<\/th>\n/g, '$1$2')
+        .replace(/<td class="web-text-center">(\d+)<\/td>\n/g, ' $1')
+        .replace(/<\/tr>/g, '<br>\n')
+      })
+      // 投手結果
+      .replace(/<th>投手結果<\/th>([\s\S]*?)<\/tbody>\n<\/table>/, function(_all, _data){
+      return _data
+        .replace(/<th>回数<\/th>\n<th>被安打<\/th>\n<th>被本塁打<\/th>\n<th>奪三振<\/th>\n<th>与四死球<\/th>\n<th>失点<\/th>\n<th>自責点<\/th>\n<\/tr>/, '<br>\n[打撃結果表記について]<br>\n席:打席数<br>打:打数<br>\n安:安打数<br>\n点:打点<br>\n<br>\n<div class="hd_03">投手結果</div>\n')
+        .replace(/<th class="web-bg-1">(.*?)<\/th>\n<td class="web-text-center">(.*?)<\/td>\n/g, '$1<br>\nイニング安本三四失責<br>\n$2')
+        .replace(/<td class="web-text-center">(\d+)<\/td>\n/g, ' $1')
+        .replace(/<\/tr>/g, '<br>\n<br>\n')
+        + '[表記について]<br>\n安:被安打数<br>\n本:被本塁打数<br>\n三:奪三振数<br>\n四:与四死球<br>\n失:失点<br>\n責:自責点<br>\n';
+    })
+      .replace(/<a class="web-link-3" href="\/farm\/schedule\/"><span>リーグ試合日程はこちら<\/span><\/a>/, '&gt;&gt;<a href="/farm/schedule.html">リーグ試合日程はこちら</a>\n')
+      .replace(/<a class="web-link-3" href="\/farm\/(\d{4})league4\/"><span>D・リーグ試合日程はこちら<\/span><\/a><br>\n<br>/, '<br>\nD・リーグ試合日程はこちら<br>[URL(PC・スマートフォン)]<br><div class="fz_s">http://www.b.example.com/dummy/</div>\n')
+      .replace(/<a class="web-link-3 forSP" href="\/column\/list\/00000001\/0.html"><span>D・リーグ試合戦評はこちら\(試合日翌日配信\)<\/span><\/a><br>\n<br>/, '<br>\n&gt;&gt;<a href="/column/list/index.html?c=00000001"><span>D・リーグ試合戦評はこちら(試合日翌日配信)</a><br>')
+      .replace(/<a class="web-link-3" href="\/team\/(\d{4})springcamp\/index.html\?dat=\d{6}"><span>\d{4}春季キャンプ情報<\/span><\/a>/, '&gt;&gt;<a href="/team/$1springcamp/index.html">$1春季ｷｬﾝﾌﾟ情報</a>')
+      .replace(/<\/?(p|table|thead|tbody|tr|col|colgroup).*?>/g, '')
+      .replace(/^\n/gm, '');
+  }
+
+  function convertProcessCol(str) {
+    var result = str.match(/　  123 456 789 計<br>[\s\S]*?<span class="icon01">■<\/span>チームB 本塁打<br>\n*.*?<br>/);
+    if(!result) {
+      return '正常に取得できませんでした。';
+    }
+    return '<p>'
+      + result[0].replace(/([ァ-ヾ]) \|/g, '$1<span class="forFP">&nbsp;</span>|')
+      + '\n▼試合戦評</p>\n'
+      + '<p>戦評が入ります</p>';
+  }
+  //確認用データ出力
+  function confirmInfo(mode) {
+    var str  = tool.before.value;
+
+    if(mode == 'battery') {
+      //バッテリー確認用データ
+      var conBattery = '[Pitcher] ' + str.replace(/^[\s\S]*?投手名.*?\n([\s\S]*?\n)\t{3,}[\s\S]*$/g, function(_all, _pitcher){
+        _pitcher = _pitcher.replace(/\t\t(.*?)\t.*?\n/g, '$1-').replace(/-$/, '<br>\n');
+        return _pitcher;
+      });
+      conBattery += '[Catcher (at Random)] ' + str.replace(/^[\s\S]*?打順\t.*?\n([\s\S]*?)\s*\n\t\t投手名[\s\S]*$/, function(_all, _catcher){
+        var _result = "";
+        _catcher = _catcher.match(/^\d?\t\S*?[2２]\S*?\t.*?\t/gm); //先発を優先していない
+        _catcher.forEach(function(_player){
+          _result += tool.proofPlayerLong(_player.replace(/^\d?\t\S*?[2２]\S*?\t(.*?)\t/, '$1')) + ' ';
+        });
+        return _result;
+      });
+      return conBattery.replace(/　([貴翔祐英靖一])?.*?(?=[-<])/g, '$1').replace(/-$/, '') + '<br>\n';
+    } else if(mode == 'homerun') {
+      //本塁打確認用データ
+      var conHomerun = '[Homerun] ' + str.replace(/^[\s\S]*?打順\t.*?\n([\s\S]*?)\s*\n\t\t投手名[\s\S]*$/, function(_all, _batter){
+        var _result = "";
+        _batter = _batter.match(/^\d?\t.*?\t.*?\t.*本.*?$/gm);
+        if(_batter) {
+          _batter.forEach(function(_player, i) {
+            _batter[i] = tool.proofPlayerLong(_player.replace(/^\d?\t.*?\t(.*?)\t.*本.*?$/, '$1'));
+          });
+          _result = _batter.join(' ');
+        } else {
+          _result = 'なし';
+        }
+        return _result;
+      });
+      return conHomerun;
+    }
+  }
+
+  //Convert Order
+  function convertOrder() {
+    tool.before.value = tool.before.value.replace(/^\s*/, '');//.replace(/\n\s*打順[\s\S]*$/, '\n')
+    var str  = tool.before.value;
+    if(str) {
+      str = Convert.proof(str, 'b');
+      str = Convert.zenkaku(str);
+      str = convertProcess(str);
+      log(document.getElementById('titlePreview').innerHTML);
+      str = Convert.mark(str);
+      tool.after.value = str;
+      tool.finish('変換してクリップボードにコピーしました。<br>内容は必ず確認してください。', str);
+    } else {
+      tool.info('Excelソースに何も入力されていません。');
+    }
+  }
+
+  //日付でデフォルトのモードを変える
+  window.addEventListener('DOMContentLoaded', function() {
+    if(localStorage['b_results.gamemode']) {
+      gameMode.value = localStorage['b_results.gamemode'];
+      return;
+    }
+    var today = Module.getNow('mmdd');
+    for(_mode in tool.termGameMode) {
+      if(tool.termGameMode[_mode][0] <= today && today <= tool.termGameMode[_mode][1]) {
+        gameMode.value = _mode;
+        return;
+      }
+    }
+    gameMode.value = 'practice';
+  });
+
+</script>
+</body>
+</html>

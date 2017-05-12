@@ -1,0 +1,166 @@
+const settings = [];
+
+/**
+ * 今年の年(年がわり変更してください)
+ */
+settings.thisyear = 2018;
+
+//自動取得 settings.thisyear = new Date().getFullYear();
+
+/**
+ * 球団共通の校正
+ */
+settings.proofingMapCommon = {
+  ' />': '>', '¥': '&yen;', '￥': '&yen;',
+  '（': '(', '）': ')',
+  '~': '～', '〜': '～',
+  '！！': '!!',
+  '&amp;amp;': '&amp;',
+  '髙': '高', '﨑': '崎', '神': '神', '福': '福',
+  '羽': '羽', '黑': '黒', '塚': '塚', '增': '増',
+  '橫': '横', '靑': '青', '淸': '清', '館': '館',
+  '飯': '飯', '鄕': '郷', '濵': '濱', '都': '都',
+  '瀨': '瀬', '郞': '郎', '朗': '朗', '逸': '逸',
+  '寬': '寛', '德': '徳', '悅': '悦', '晴': '晴',
+  '靖': '靖', '匤': '匡', '羡': '羨', '敎': '教',
+  '妺': '妹',
+};
+
+/**
+ * チームAの校正
+ */
+settings.proofingMapTeamA = {
+  '！！': '!!',
+  '予め': 'あらかじめ', '是非': 'ぜひ',
+};
+
+/**
+ * チームBの校正
+ */
+settings.proofingMapTeamB = {
+  '！！': '!!',
+  '？？': '??',
+  'あらかじめ': '予め',
+  'ぜひ': '是非',
+  '下さい': 'ください',
+  '頂きます': 'いただきます',
+};
+
+/**
+ * 注意を促す書き方
+ * reg: matchの条件 {string, regexp}
+ * teamId: チームを限定する場合に'a'か'b'を指定
+ */
+settings.checkStyle = {
+  '時間表記': {
+    reg: new RegExp('(?:1\\d|2[0-4]|\d):[0-5]\\d'),
+  },
+  '全角スペース': {
+    reg: new RegExp('　'),
+  },
+/*
+  '日付表記': {
+    reg: new RegExp('(?:[1-9]|1[0-2])\\/(?:[1-2]\\d|3[0-1]|[1-9])'),
+  },
+*/
+}
+
+/**
+ * 閉じ忘れチェックをするタグの種類
+ */
+settings.checkTags = [
+  'div', 'span', 'ul', 'li',
+];
+
+
+/**
+ * チームA独自の原稿記法に関する設定
+ */
+settings.automarkTeamA = {
+
+  config: {
+    /** テーブル見出し列数のデフォルト */
+    tableTheadDefault: 0,
+    /** テーブル見出し行数のデフォルト */
+    tableThDefault: 1,
+  },
+
+  /** タグの定義(L) */
+  tags: {
+    h1: '【ページタイトル】',
+    h2: '■',
+    h3: '▼',
+    h4: '◆',
+    h5: '◇',
+    img: '[画像]',
+    figcaption: '[キャプション]',
+    p: '　',
+    red: '[赤字]',
+    bold: '[太字]',
+    table: '[表]',
+    tableCol: '列',
+    tableThead: '見出し行',
+    tableTh: '見出し列',
+    tableThDevide: '|',
+  },
+
+  template: {
+    tableHeader: '<table class="web-table01 web-js-table-wrap">',
+    tableThead: ['<th class="web-bg-1">', '</th>'],
+    tableTh: ['<th>', '</th>'],
+    tableTd: ['<td>', '</td>'],
+    tableFooter: '</table>',
+    dlHeader: `
+      <div class="web-dl-wrap">
+    `,
+    dlFooter: `
+      </div>
+    `,
+  },
+};
+
+/**
+ * チームB独自の原稿記法に関する設定
+ */
+settings.automarkTeamB = {
+
+  config: {
+    /** テーブル見出し列数のデフォルト */
+    tableTheadDefault: 0,
+    /** テーブル見出し行数のデフォルト */
+    tableThDefault: 1,
+  },
+
+  /** タグの定義(M) */
+  tags: {
+    h1: '【ページタイトル】',
+    h2: '■',
+    h3: '▼',
+    h4: '◆',
+    h5: '◇',
+    img: '[画像]',
+    figcaption: '[キャプション]',
+    p: '　',
+    red: '[赤字]',
+    bold: '[太字]',
+    table: '[表]',
+    tableCol: '列',
+    tableThead: '見出し行',
+    tableTh: '見出し列',
+    tableThDevide: '|',
+  },
+
+  template: {
+    tableHeader: '<table class="web-table01 web-js-table-wrap">',
+    tableThead: ['<th class="web-bg-1">', '</th>'],
+    tableTh: ['<th>', '</th>'],
+    tableTd: ['<td>', '</td>'],
+    tableFooter: '</table>',
+    dlHeader: `
+      <div class="web-dl-wrap">
+    `,
+    dlFooter: `
+      </div>
+    `,
+  },
+};

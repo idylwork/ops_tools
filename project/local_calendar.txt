@@ -1,0 +1,152 @@
+if (typeof settingsTemplate === 'undefined') { var settingsTemplate = []; }
+
+settingsTemplate.localCalendar = {
+  /**
+   * メディア情報テンプレート
+   * 項目定義で指定した名前でプレースホルダーを使用することができる。
+   * {:name} 項目を挿入する
+   * {?name 表示するソース} 原稿内に項目が見つけられた場合に表示する
+   * {!name 表示するソース} 原稿内に項目が見つけられなかった場合に表示する
+   *
+   * 例: 原稿にurlの項目がある場合にリンクを表示し、ない場合には『リンクはありません』と表示する場合
+   * {?url <a href="{:url}">リンク</a>}{!url リンクはありません}
+   */
+
+  delimiter: '\\n(?=.*?\\t\\d{1,2}月\\d{1,2}日)',
+
+  template: {
+
+  /** 個別メディア情報テンプレート */
+  loop: `
+    <section id="{:date_id}_01">
+      <h3 class="web-h3Title02"><span class="web-titleInner">{:date_md} {:event}</span></h3>
+      <div class="web-dl-wrap">
+        <dl>
+          <dt>日時</dt>
+          <dd>{:date}</dd>
+        </dl>
+        <dl>
+          <dt>開催場所</dt>
+          <dd>{:location}</dd>
+        </dl>
+        <dl>
+          <dt>参加・出演者</dt>
+          <dd>{:performer}</dd>
+        </dl>
+        <dl>
+          <dt>開催概要</dt>
+          <dd>{:detail}</dd>
+        </dl>
+        <dl>
+          <dt>イベント詳細</dt>
+          <dd>
+            <p><a class="web-link-3" href="{:url}"><span>詳細はこちら</span></a></p>
+          </dd>
+        </dl>
+      </div>
+    </section>
+  `,
+  loopFp: `
+    <a name="{:date_id}"></a>
+    <div class="hd_04">{:date_md} {:event}</div>
+    <font size="1">■</font>日時<br>
+    {:date}<br>
+    <br>
+    <font size="1">■</font>開催場所<br>
+    {:location}<br>
+    <br>
+    <font size="1">■</font>参加･出演者<br>
+    {:performer}<br>
+    <br>
+    <font size="1">■</font>開催概要<br>
+    {:detail}<br>
+    <br>
+    <font size="1">■</font>ｲﾍﾞﾝﾄ詳細<br>
+    >><a href="{:url}">詳細はこちら</a><br>
+    <br>
+  `,
+  newsHeader: `
+    <div class="web-text-block">
+      <p>{:date_m}月開催分</p>
+    </div>
+  `,
+  newsFooter: `
+    <p class="web-btn-container"><a class="web-btn-4" href="/expansion/local/calendar/index.html"><span>カレンダーはこちら</span></a></p>
+  `,
+  newsHeaderFp: `
+    {:date_m}月開催分<br>
+    <br>
+  `,
+  newsFooterFp: `
+    &gt;&gt;<a href="/expansion/local/calendar/index.html">ｶﾚﾝﾀﾞｰはこちら</a>
+  `,
+
+  }, //template: ここまで
+  /**
+   * 項目定義
+   * プレースホルダーの名前とメール原稿の読み取り条件
+   * 正規表現で指定し、必要な文字列を()で囲む
+   */
+  itemDefine: {
+    event: '([\\s\\S]*?)\\t[\\s\\S]*?\\t[\\s\\S]*?\\t[\\s\\S]*?\\t[\\s\\S]*?\\t[\\s\\S]*?(?:\\s|$)',
+    date: '[\\s\\S]*?\\t([\\s\\S]*?)\\t[\\s\\S]*?\\t[\\s\\S]*?\\t[\\s\\S]*?\\t[\\s\\S]*?(?:\\s|$)',
+    location: '[\\s\\S]*?\\t[\\s\\S]*?\\t([\\s\\S]*?)\\t[\\s\\S]*?\\t[\\s\\S]*?\\t[\\s\\S]*?(?:\\s|$)',
+    performer: '[\\s\\S]*?\\t[\\s\\S]*?\\t[\\s\\S]*?\\t([\\s\\S]*?)\\t[\\s\\S]*?\\t[\\s\\S]*?(?:\\s|$)',
+    detail: '[\\s\\S]*?\\t[\\s\\S]*?\\t[\\s\\S]*?\\t[\\s\\S]*?\\t([\\s\\S]*?)\\t[\\s\\S]*?(?:\\s|$)',
+    url: '[\\s\\S]*?\\t[\\s\\S]*?\\t[\\s\\S]*?\\t[\\s\\S]*?\\t[\\s\\S]*?\\t([\\s\\S]*?)(?:\\s|$)',
+    date_id: ['special'],
+    date_md: ['special'],
+    date_m: ['special'],
+  },
+  /** メディア情報に必ず存在する要素 */
+  itemRequired: 'event',
+  json: [ //ニュースのJSON
+    {
+      title: {
+        name: "OpenCmsString.Title_1_.0",
+        val: "カレンダーを更新",
+      },
+      newsDevice: {
+        name: "OpenCmsString.Device_1_.0",
+        val: true,
+        checkbox: [0, 1, 2]
+      },
+      date: {
+        name: "OpenCmsDateTime.DisplayDate_1_.0",
+        val: "yyyy/mm/dd",
+      },
+        category: {
+        name: "OpenCmsString.Category_1_.0",
+        val: "/.content/news/category/nc_00000018.html",
+      },
+      sugotoku: {
+        name: "OpenCmsBoolean.DisplayToSugotoku_1_.0",
+        val:  true,
+        checkbox: [0],
+      },
+      topics: {
+        name: "OpenCmsBoolean.DisplayTotopics_1_.0",
+        val: false,
+        checkbox: [0],
+      },
+      device1: {
+        name: "OpenCmsString.NewsBody_1_.Choice_1_.Easy_1_.Device_1_.0",
+        val: true,
+        checkbox: [0, 1],
+      },
+      device2: {
+        name: "OpenCmsString.NewsBody_1_.Choice_1_.Easy_2_.Device_1_.0",
+        val: true,
+        checkbox: [2],
+      },
+      body1: {
+        name: "OpenCmsString.NewsBody_1_.Choice_1_.Easy_1_.BodyTextUpper_1_.0",
+        val: "",
+      },
+      body2: {
+        name: "OpenCmsString.NewsBody_1_.Choice_1_.Easy_2_.BodyTextUpper_1_.0",
+        val: "",
+      },
+    },
+  ]
+};

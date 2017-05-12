@@ -1,0 +1,17 @@
+if (typeof settingsTemplate === 'undefined') { var settingsTemplate = []; }
+
+/**
+* 施設営業時間カレンダー用 開場時間
+* 以下のページをブラウザからそのままコピーして更新してください。
+* http://mobile.b.example.com/dummy/
+*/
+
+/* 開場時間･チケット前売前日シート貼り 以下の行から */ settingsTemplate.stadiumOpen = `
+
+1月
+
+1日(月)
+VS 相手チーム名
+00時00分試合開始(00時30分開場)
+
+`; /* 開場時間･チケット前売前日シート貼り 以上の行まで */

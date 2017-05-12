@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TeamB Training</title>
+  <style type="text/css">
+    body {
+      font-family: "游ゴシック体", YuGothic, "游ゴシック", "Yu Gothic" ;
+      letter-spacing: 0.1rem;
+    }
+    button {
+      font-family: "游ゴシック体", YuGothic, "游ゴシック", "Yu Gothic" ;
+      font-size: 1.2rem;
+      color: #ffffff;
+      background: #898881;
+      padding: 10px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      min-width: 50px;
+    }
+    .tool {
+      display: flex;
+      margin-bottom: 4px;
+    }
+    .editor {
+      height: 200px;
+      padding: 10px;
+      border: 1px solid #cccccc;
+    }
+    .bold {
+      font-weight: bold;
+    }
+    .italic {
+      font-style:italic;
+    }
+    .del {
+      text-decoration: line-through;
+    }
+    .red {
+      color: #dc2202;
+    }
+  </style>
+</head>
+<body>
+  <h1>Decorator</h1>
+  <div class="tool">
+    <button data-decoration="clear">&times;</button>
+    <button data-decoration="bold" class="bold">B</button>
+    <button data-decoration="italic" class="italic">i</button>
+    <button data-decoration="del" class="del">S</button>
+    <button data-decoration="red" class="red">R</button>
+    <button data-decoration="link" data-target="#href" class="">Link</button>
+    <input type="text" id="href" value="https://">
+  </div>
+  <div class="editor" contenteditable="true">
+    <div>サンプルテキスト</div>
+    <div>サンプルテキスト</div>
+    <div>サンプルテキスト</div>
+  </div>
+  <script defer>
+    function textDecoration(className) {
+      const selection = window.getSelection()
+      if (!selection.rangeCount) return
+
+      const texts = selection.toString().split("\n")
+      const range = selection.getRangeAt(0)
+      console.log(texts)
+
+
+const text = texts[0]
+
+      if (texts.length > 2) {
+        console.log(document.activeElement)
+      }
+      switch (className) {
+        case 'link':
+          chunk = document.createElement('a')
+          const hrefInput = document.querySelector(this.dataset.target)
+          chunk.href = hrefInput ? hrefInput.value : ''
+          break
+        case 'clear':
+          chunk = document.createTextNode(text)
+          range.deleteContents()
+          range.insertNode(chunk)
+        default:
+          chunk = document.createElement('span')
+          chunk.classList.add(className)
+      }
+      if (chunk instanceof HTMLElement) {
+        chunk.innerHTML = selection.toString()
+      }
+      range.deleteContents()
+      range.insertNode(chunk)
+    }
+
+    function createChunk(className, text) {
+         }
+
+    document.querySelectorAll('[data-decoration]').forEach((el) => {
+      el.addEventListener('click', textDecoration.bind(el, el.dataset.decoration))
+    })
+  </script>
+</body>
+</html>

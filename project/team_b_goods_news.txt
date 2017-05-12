@@ -1,0 +1,96 @@
+if (typeof settingsTemplate === 'undefined') { var settingsTemplate = []; }
+
+settingsTemplate.goodsNews = {
+  /**
+   * メディア情報テンプレート
+   * 項目定義で指定した名前でプレースホルダーを使用することができる。
+   * {:name} 項目を挿入する
+   * {?name 表示するソース} 原稿内に項目が見つけられた場合に表示する
+   * {!name 表示するソース} 原稿内に項目が見つけられなかった場合に表示する
+   *
+   * 例: 原稿にurlの項目がある場合にリンクを表示し、ない場合には『リンクはありません』と表示する場合
+   * {?url <a href="{:url}">リンク</a>}{!url リンクはありません}
+   */
+
+  delimiter: '\n▼',
+
+  template: {
+
+  /** 個別メディア情報テンプレート */
+  loop: `
+     {?h2 {h2}{:h2}}
+     {h3}{:h3}
+     {p}{:p}
+     {dl}{:dl}{/dl}
+  `,
+
+  },
+  /**
+   * 項目定義
+   * プレースホルダーの名前とメール原稿の読み取り条件
+   * 正規表現で指定し、必要な文字列を()で囲む
+   */
+  blockDefine: {
+    title: 'タイトル\\n(.*)\\s',
+    header: 'タイトル\\n.*\\s+"?([\\s\\S]*)"?\\s+\\n■(?!タイトル)',
+  },
+
+  itemDefine: {
+    h2: '\\n■(.*)(?=\\n)',
+    h3: '\\n▼(.*)(?=\\n)',
+    p: '\\n▼.*\\n([\\s\\S]*?)\\n[\\n{]',
+    img_count: ['(?:\\{img\\})+'],
+    dl: '\\n.*?\\t[\\s\\S]*?\\n\\n',
+  },
+  /** 必ず存在する要素 */
+  itemRequired: 'h3',
+  json: [ //ニュースのJSON
+    {
+      title: {
+        name: "OpenCmsString.Title_1_.0",
+        val: "最新メディア出演・掲載情報",
+      },
+      newsDevice: {
+        name: "OpenCmsString.Device_1_.0",
+        val: true,
+        checkbox: [0, 1, 2]
+      },
+      date: {
+        name: "OpenCmsDateTime.DisplayDate_1_.0",
+        val: "yyyy/mm/dd",
+      },
+        category: {
+        name: "OpenCmsString.Category_1_.0",
+        val: "/.content/news/category/nc_00000001.html",
+      },
+      sugotoku: {
+        name: "OpenCmsBoolean.DisplayToSugotoku_1_.0",
+        val:  true,
+        checkbox: [0],
+      },
+      topics: {
+        name: "OpenCmsBoolean.DisplayTotopics_1_.0",
+        val: false,
+        checkbox: [0],
+      },
+      device1: {
+        name: "OpenCmsString.NewsBody_1_.Choice_1_.Easy_1_.Device_1_.0",
+        val: true,
+        checkbox: [0, 1],
+      },
+      device2: {
+        name: "OpenCmsString.NewsBody_1_.Choice_1_.Easy_2_.Device_1_.0",
+        val: true,
+        checkbox: [2],
+      },
+      body1: {
+        name: "OpenCmsString.NewsBody_1_.Choice_1_.Easy_1_.BodyTextUpper_1_.0",
+        val: "",
+      },
+      body2: {
+        name: "OpenCmsString.NewsBody_1_.Choice_1_.Easy_2_.BodyTextUpper_1_.0",
+        val: "",
+      },
+    },
+  ]
+};

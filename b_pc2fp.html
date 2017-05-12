@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FP Convert</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link href="css/bfp.css" rel="stylesheet">
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+      <span class="navbar-brand">B-PC2FP</span>
+    </div>
+    <!-- navigation -->
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="nav navbar-nav">
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamB<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="b_pcmut.html">PC Markup</a></li>
+                <li><a href="b_pc2fp.html">FP Convert</a></li>
+                <li><a href="b_project.html">Project Automation</a></li>
+                <li><a href="b_results.html">Game Result</a></li>
+                <li><a href="b_calendar.html">Store Calendar</a></li>
+              </ul>
+            </li>
+
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamA<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="a_pcmut.html">PC Markup</a></li>
+                <li><a href="a_pc2fp.html">FP Convert</a></li>
+                <li class="divider"></li>
+                <li><a href="a_4lbtb.html">Lookback</a></li>
+                <li><a href="a_mmbranch.html">Mail Magazine</a></li>
+              </ul>
+            </li>
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Common<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="c_csvdf.html">CSV Define</a></li>
+                <li><a href="c_xl2tb.html">Tablize</a></li>
+                <li><a href="c_tb2dl.html">Table to DL</a></li>
+                <li><a href="c_bmlib.html">Bookmarklet</a></li>
+                <li class="divider"></li>
+                <li><a href="c_start.html">Introduction</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-right">
+            <li>
+              <div class="checkbox">
+                <label><input type="checkbox" id="displayProcedure">説明を表示する</label>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <!-- /navigation -->
+
+  </div>
+</nav><div id="info"></div>
+
+<section id="pc2fp">
+  <p class="procedure well">PC版のHTMLソースからモバイル版のソースを生成するツールです。</p>
+  <h1 class="procedure"><span class="circle-text label-success">1</span> PC版のソースを貼り付けて変換する</h1>
+  <form name="conv">
+    <textarea name="before" class="form-control" rows="6" placeholder="PC版ソース"></textarea>
+    <button type="button" class="btn btn-success btn-lg btn-block" style="margin: 10px 0" onclick="convertOrder()"><span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span> Convert &amp; Copy</button>
+    <div class="container">
+      <div class="col-xs-4">
+        <button type="button" class="btn btn-default btn-lg btn-block" style="margin: 10px 0" onclick="tool.refreshOrder()"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 更新</button>
+      </div>
+      <div class="col-xs-4">
+        <button type="button" class="btn btn-default btn-lg btn-block" style="margin: 10px 0" onclick="tool.addPicture()"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span> 画像を表示</button>
+      </div>
+      <div class="col-xs-2">
+        <div class="form-group">
+          <label>DLのスタイル</label>
+          <select class="form-control" id="dtStyle" name="dtStyle">
+            <li><a href="c_csvdf.html">CSV Define</a></li>
+            <option value="hd_04" selected="selected">見出し</option>
+            <option value="icon03">■アイコン</option>
+            <option value="brackets">[角形括弧]</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-xs-2">
+        <div class="checkbox">
+          <label><input type="checkbox" id="proofOnly" name="proofOnly" value="">文字種変換のみ</label>
+        </div>
+      </div>
+    </div>
+
+
+  <div class="row">
+    <div class="col-xs-5">
+      <div id="output" class="panel panel-default center-block" style="visibility: hidden; opacity: 0;">
+        <div class="panel-heading">簡易プレビュー</div>
+        <div class="panel-body">
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-7">
+      <h1 class="procedure"><span class="circle-text label-success">2</span> 確認しながら微調整する</h1>
+      <div class="well procedure">
+        <p>出力されたソースを変更して更新ボタン (もしくはShift + Enter) を押すと簡易プレビューの内容が更新されます。<br>
+          『画像を表示』ボタンで一枚だけ画像を&lt;img&gt;タグで表示することができます。</p>
+      </div>
+      <textarea name="after" class="form-control" rows="6" placeholder="FP版ソース"></textarea>
+    </div>
+  </div>
+  </form>
+
+  <div id="replaceLogArea"></div>
+  <div class="well">
+    <p><strong>変換 + コピー : </strong>PC版ソースにフォーカスして Shift + Enter</p>
+    <p><strong>プレビューを更新する : </strong>FP版にフォーカスして Shift + Enter</p>
+    <strong>&lt;dt&gt; の変換方式を変える : </strong>DLのスタイル を変更してから変換する
+  </div>
+</section>
+<hr>
+<div class="row">
+  <div class="text-center text-muted">
+    Copyright &copy; 2017 &middot; Released under the MIT license &middot; Kaoru Yoshinaga
+  </div>
+</div>
+<hr>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script type="text/javascript" src="settings.txt"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript">
+  function outputFilter(str) {
+    return str.replace(/src="\/fp\/img\/dummy.gif"/g, 'src="img/dummy.gif"')
+      .replace(/ (href|src)="\//g, ' $1="http://preview.mobile.b.example.com/');
+  }
+  var tool = new ConverterPageFp({ teamId: 'b', outputFilter: outputFilter });
+
+  //Convert Order
+  function convertOrder() {
+    tool.convertPrepare();
+    var str  = tool.before.value;
+    if(str) {
+      str = Convert.proof(str, 'b');
+      str = Convert.hankaku(str);
+      if(!document.conv.proofOnly.checked) {
+        str = tool.convertProcess(str);
+      }
+      str = Convert.mark(str);
+      str = Convert.lineCompress(str);
+      tool.after.value = str;
+      tool.finish('変換してクリップボードにコピーしました。', str);
+    } else {
+      tool.info('PC版ソースに何も入力されていません。');
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FP Convert</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link href="css/afp.css" rel="stylesheet">
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+      <span class="navbar-brand">C-BMLIB</span>
+    </div>
+    <!-- navigation -->
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="nav navbar-nav">
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamB<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="b_pcmut.html">PC Markup</a></li>
+                <li><a href="b_pc2fp.html">FP Convert</a></li>
+                <li><a href="b_project.html">Project Automation</a></li>
+                <li><a href="b_results.html">Game Result</a></li>
+                <li><a href="b_calendar.html">Store Calendar</a></li>
+              </ul>
+            </li>
+
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">TeamA<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="a_pcmut.html">PC Markup</a></li>
+                <li><a href="a_pc2fp.html">FP Convert</a></li>
+                <li class="divider"></li>
+                <li><a href="a_4lbtb.html">Lookback</a></li>
+                <li><a href="a_mmbranch.html">Mail Magazine</a></li>
+              </ul>
+            </li>
+            <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Common<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="c_csvdf.html">CSV Define</a></li>
+                <li><a href="c_xl2tb.html">Tablize</a></li>
+                <li><a href="c_tb2dl.html">Table to DL</a></li>
+                <li><a href="c_bmlib.html">Bookmarklet</a></li>
+                <li class="divider"></li>
+                <li><a href="c_start.html">Introduction</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-right">
+            <li>
+              <div class="checkbox">
+                <label><input type="checkbox" id="displayProcedure">説明を表示する</label>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <!-- /navigation -->
+  </div>
+</nav><div id="info"></div>
+
+
+<section class="bmlib" onclick="return false;">
+  <p class="procedure well">ブックマークバーに様々な機能を実装できます。<br>
+  ブックマークレットというブックマークバーから実行できる簡易的なプログラムです。</p>
+  <h1 class="text-center"><span class="glyphicon glyphicon-share-alt" aria-hidden="true" style="transform: rotate(-60deg);"></span> 各ボタンからブックマークバーにドラッグ</h1>
+  <hr>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-6">
+        <h2 style="margin-top: 0;">Preview State Toggle</h2>
+      </div>
+      <div class="col-sm-6">
+        <p>公式サイトで実行するとプレビュー状態を切り替える<br>
+        (preview.を付けたり消したりする)</p>
+      </div>
+    </div>
+    <div class="col-xs-12">
+      <a class="btn btn-primary btn-lg btn-block bookmarklet" href="javascript:var url=location.href;if(url.match(/https?:\/\/preview./)){location.href=url.replace(/https?:\/\/preview./,'http://');}else{location.href=url.replace(/https?:\/\//,'http://preview.')}"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Prv</a>
+    </div>
+  </div>
+</section>
+
+<hr>
+<section class="bmlib">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-4">
+        <h2 style="margin-top: 0;">Device Change</h2>
+      </div>
+      <div class="col-sm-8">
+        <p>公式サイト内で実行するとデバイスを切り替える<br>
+        CMSニュース編集画面では対象ニュースのプレビューを開く</p>
+      </div>
+    </div>
+    <div class="col-xs-4">
+      <a class="btn btn-success btn-lg btn-block bookmarklet" href="javascript:(function(){var url=location.href,pg=new RegExp('https?:\/\/(preview.)?(sp|mobile).(a|b)\.example\.com\/');if(url.match(pg)){var jmp=url.replace(pg,'http://$1www.$3.jp/').replace(/\/news\/page.html\?n=(\d{8})/,'/news/detail/$1.html');location.href=jmp;}else if(location.href=='https://cms.example.com/ocms/system/workplace/editors/editor.jsp'){var nid=window.frames[0].frames[1].EDITOR.resource.value.substr(18,8);if(document.title.substr(1,7) == 'team-b'){var dm='domain-b'}else{var dm='domain-a'}open('http://preview.www.'+dm+'.com/news/detail/'+nid+'.html','news'+nid);}}());"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> PC</a>
+    </div>
+    <div class="col-xs-4">
+      <a class="btn btn-success btn-lg btn-block bookmarklet" href="javascript:(function(){var url=location.href,pg=new RegExp('https?:\/\/(preview.)?(www|mobile).(a|b)\.example\.com\/');if(url.match(pg)){var jmp=url.replace(pg,'http://$1sp.$3.jp/').replace(/\/news\/page.html\?n=(\d{8})/,'/news/detail/$1.html');location.href=jmp;}else if(location.href=='https://cms.example.com/ocms/system/workplace/editors/editor.jsp'){var nid=window.frames[0].frames[1].EDITOR.resource.value.substr(18,8);if(document.title.substr(1,7) == 'team-b'){var dm='domain-b'}else{var dm='domain-a'}open('http://preview.sp.'+dm+'.com/news/detail/'+nid+'.html','news'+nid);}}());"><span class="glyphicon glyphicon-phone" aria-hidden="true"></span> SP</a>
+    </div>
+    <div class="col-xs-4">
+      <a class="btn btn-success btn-lg btn-block bookmarklet" href="javascript:(function(){var url=location.href,pg=new RegExp('https?:\/\/(preview.)?(www|sp).(a|b)\.example\.com\/');if(url.match(pg)){var jmp=url.replace(pg,'http://$1mobile.$3.jp/').replace(/\/news\/detail\/(\d{8})\.html/,'/news/page.html?n=$1');location.href=jmp;}else if(location.href=='https://cms.example.com/ocms/system/workplace/editors/editor.jsp'){var nid=window.frames[0].frames[1].EDITOR.resource.value.substr(18,8);if(document.title.substr(1,7) == 'team-b'){var dm='domain-b'}else{var dm='domain-a'}open('http://preview.mobile.'+dm+'.com/news/page.html?n='+nid,'news'+nid);}}());"><span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span> FP</a>
+    </div>
+  </div>
+</section>
+
+<hr>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-4">
+        <h2 style="margin-top: 0;">TeamA Media</h2>
+      </div>
+      <div class="col-sm-8">
+        <p>SNS当該記事を開いた状態で実行すると<br>
+        Mediaブロック用のソースをクリップボードにコピーする</p>
+      </div>
+    </div>
+    <div class="col-xs-4">
+      <a class="btn btn-info btn-lg btn-block bookmarklet" href="javascript:var now=new Date(),yy=now.getFullYear()%25100,mm=('0'+(now.getMonth()+1)).slice(-2),dd=('0'+now.getDate()).slice(-2),act=document.getElementsByClassName('permalink-tweet')[0],text=act.getElementsByClassName('tweet-text')[0].innerHTML.replace(/<a.*?<b>(.*?)<\/b><\/a>/g,'$1').replace(/^([\s\S]*?)<a href=&quot;http[\s\S]*/,'$1').replace(/\n/g,' '),likes=act.getElementsByClassName('request-favorited-popup')[0].getAttribute('data-activity-popup-title').replace(/(\d\S*?) いいね/,'$1'),date=act.getElementsByClassName('metadata')[0].children[0].innerHTML;var src='<div class=&quot;twitter_block&quot;>\n<a href=&quot;'+location.href+'&quot; target=&quot;_blank&quot;>\n  <div class=&quot;thumnail&quot;>\n    <img src=&quot;/images/'+yy+mm+'/thm_'+mm+dd+'_twitter.jpg&quot; class=&quot;thumnailImage&quot;>\n    <div class=&quot;metaBox&quot;>\n      <p class=&quot;screenName&quot;>@team_a_official</p>\n      <p class=&quot;metadata&quot;>'+date+'</p>\n    </div>\n    <div class=&quot;likesBox&quot;>\n      LIKES\n      <span>+'+likes+'</span>\n    </div>\n  </div>\n  <p class=&quot;post&quot;>\n    <span>\n      '+text+'\n    </span>\n  </p>\n</a>\n</div>\n';var cp=document.createElement('textarea');cp.value=src;cp.selectionStart = 0;cp.selectionEnd = cp.value.length;cp.style.position = 'fixed';cp.style.left = '-100%';document.body.appendChild(cp);cp.focus();var result = document.execCommand('copy');cp.blur();document.body.removeChild(cp);var act=document.getElementsByClassName('permalink-tweet')[0];act.setAttribute('style','background-color:#a6ddff;transition:0s;');setTimeout(function(){act.setAttribute('style','background-color:#ffffff;transition:1.2s;');},0);"><span class="glyphicon glyphicon-camera" aria-hidden="true"></span> twitter</a>
+    </div>
+    <div class="col-xs-4">
+      <a class="btn btn-info btn-lg btn-block bookmarklet" href="javascript:var now=new Date(),yy=now.getFullYear()%25100,mm=('0'+(now.getMonth()+1)).slice(-2),dd=('0'+now.getDate()).slice(-2),text=document.getElementsByClassName('fbUserContent')[0].getElementsByClassName('userContent')[0].innerHTML.replace(/#|(<\/?.*?>)|\s%E3%83%BC%E3%83%BC%E3%83%BC[\s\S]*/g,''),date=document.getElementsByClassName('fbUserContent')[0].getElementsByTagName('abbr')[0].title.replace(/(\d{4}%E5%B9%B4\d*%E6%9C%88\d*%E6%97%A5) (\d*:\d+)/,'$2 - $1'),plays=document.getElementById('permalink_video_pagelet').children[0].children[0].innerHTML.match(/%E5%86%8D%E7%94%9F[\d,]*?%E5%9B%9E/)+&quot;&quot;;plays=plays.replace(/[%E5%86%8D%E7%94%9F%E5%9B%9E]/g,'');text=text.substr(0,text.length-3);var src='<div class=&quot;facebook_block&quot;>\n<a href=&quot;'+location.href+'&quot; target=&quot;_blank&quot;>\n  <div class=&quot;thumnail&quot;>\n    <img src=&quot;/images/'+yy+mm+'/thm_'+mm+dd+'_facebook.jpg&quot; class=&quot;thumnailImage&quot;>\n    <div class=&quot;metaBox&quot;>\n      <p class=&quot;screenName&quot;>@domain-a.official</p>\n      <p class=&quot;metadata&quot;>'+date+'</p>\n    </div>\n    <div class=&quot;likesBox&quot;>\n      PLAYS\n      <span>+'+plays+'</span>\n    </div>\n  </div>\n  <p class=&quot;post&quot;>\n    <span>\n      '+text+'\n    </span>\n  </p>\n</a>\n</div>';var cp=document.createElement('textarea');cp.value=src;cp.selectionStart=0;cp.selectionEnd=cp.value.length;cp.style.position='fixed';cp.style.left='-100%';document.body.appendChild(cp);cp.focus();var result=document.execCommand('copy');cp.blur();document.body.removeChild(cp);var act=document.getElementsByClassName('fbUserContent')[0];act.setAttribute('style','background-color:#a6ddff;transition:0s;');setTimeout(function(){act.setAttribute('style','background-color:#ffffff;transition:1.2s;');},0);"><span class="glyphicon glyphicon-camera" aria-hidden="true"></span> Facebook Video</a>
+    </div>
+    <div class="col-xs-4">
+      <a class="btn btn-info btn-lg btn-block bookmarklet" href="javascript:var now=new Date(),yy=now.getFullYear()%25100,mm=('0'+(now.getMonth()+1)).slice(-2),dd=('0'+now.getDate()).slice(-2),text=document.getElementsByClassName('fbUserContent')[0].getElementsByClassName('userContent')[0].innerHTML.replace(/#|(<\/?.*?>)|\s%E3%83%BC%E3%83%BC%E3%83%BC[\s\S]*/g,''),date=document.getElementsByClassName('fbUserContent')[0].getElementsByTagName('abbr')[0].title.replace(/(\d{4}%E5%B9%B4\d*%E6%9C%88\d*%E6%97%A5) (\d*:\d+)/,'$2 - $1'),likes=document.getElementsByClassName('UFILikeSentence')[0].innerHTML.match(/%E4%BB%96([,\d]*?)%E4%BA%BA/)[1]+&quot;&quot;;likes=likes.replace(/[%E5%86%8D%E7%94%9F%E5%9B%9E]/g,'');text=text.substr(0,text.length-3);var src='<div class=&quot;facebook_block&quot;>\n<a href=&quot;'+location.href+'&quot; target=&quot;_blank&quot;>\n  <div class=&quot;thumnail&quot;>\n    <img src=&quot;/images/'+yy+mm+'/thm_'+mm+dd+'_facebook.jpg&quot; class=&quot;thumnailImage&quot;>\n    <div class=&quot;metaBox&quot;>\n      <p class=&quot;screenName&quot;>@domain-a.official</p>\n      <p class=&quot;metadata&quot;>'+date+'</p>\n    </div>\n    <div class=&quot;likesBox&quot;>\n      LIKES\n      <span>+'+likes+'</span>\n    </div>\n  </div>\n  <p class=&quot;post&quot;>\n    <span>\n      '+text+'\n    </span>\n  </p>\n</a>\n</div>';var cp=document.createElement('textarea');cp.value=src;cp.selectionStart=0;cp.selectionEnd=cp.value.length;cp.style.position='fixed';cp.style.left='-100%';document.body.appendChild(cp);cp.focus();var result=document.execCommand('copy');cp.blur();document.body.removeChild(cp);var act=document.getElementsByClassName('fbUserContent')[0];act.setAttribute('style','background-color:#a6ddff;transition:0s;');setTimeout(function(){act.setAttribute('style','background-color:#ffffff;transition:1.2s;');},0);"><span class="glyphicon glyphicon-camera" aria-hidden="true"></span> Facebook Photo</a>
+    </div>
+  </div>
+</section>
+
+<hr>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-4">
+        <h2 style="margin-top: 0;">Open All Links</h2>
+      </div>
+      <div class="col-sm-8">
+        <p>公式サイト内でクリックすると<br>
+        web-link-3クラスのリンクを全て開く<br>
+        Public は本公開のリンクを確認する</p>
+      </div>
+    </div>
+
+    <div class="col-xs-6">
+      <a class="btn btn-danger btn-lg btn-block bookmarklet" href="javascript:if(location.origin.slice(7,13)=='/docs'){links=document.getElementsByTagName('a');}else{links=document.getElementsByClassName('web-link-3');}Array.prototype.forEach.call(links,function(_link,_winId){_link.getAttribute('href');/*alert(_winId+_link);*/open(_link,'window'+_winId);focus();});"><span class="glyphicon glyphicon-camera" aria-hidden="true"></span> All Links</a>
+    </div>
+    <div class="col-xs-6">
+      <a class="btn btn-danger btn-lg btn-block bookmarklet" href="javascript:links=document.getElementsByClassName('web-link-3');Array.prototype.forEach.call(links,function(_link,_winId){_link=_link.getAttribute('href');_link=new URL(_link,location.origin.replace(/:\/\/preview./,'://')).href;open(_link,'window'+_winId);focus();});"><span class="glyphicon glyphicon-camera" aria-hidden="true"></span> All Public Links</a>
+    </div>
+  </div>
+</section>
+
+<hr>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-5">
+        <h2 style="margin-top: 0;">Force Editable</h2>
+      </div>
+      <div class="col-sm-7">
+        <p>閲覧中のページを強制的に編集可能な状態にする。</p>
+      </div>
+    </div>
+
+    <div class="col-xs-12">
+      <a class="btn btn-default btn-lg btn-block bookmarklet" href="javascript:(function(b){b.contentEditable=!b.isContentEditable;})(document.body);"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit</a>
+    </div>
+  </div>
+</section>
+
+<hr>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-5">
+        <h2 style="margin-top: 0;">Copy News Code</h2>
+      </div>
+      <div class="col-sm-7">
+        <p>ニュース画面で実行すると更新コードをコピーする。</p>
+      </div>
+    </div>
+
+    <div class="col-xs-6">
+      <a class="btn btn-default btn-lg btn-block bookmarklet" href="javascript:(function(){var inputs=window.frames[0].frames[1].EDITOR,items={title:'OpenCmsString.Title_1_.0',newsDevice:'OpenCmsString.Device_1_.0',date:'OpenCmsDateTime.DisplayDate_1_.0',category:'OpenCmsString.Category_1_.0',sugotoku:'OpenCmsBoolean.DisplayToSugotoku_1_.0',hotTopics:'OpenCmsBoolean.DisplayToHotTopics_1_.0',device1:'OpenCmsString.NewsBody_1_.Choice_1_.Easy_1_.Device_1_.0',device2:'OpenCmsString.NewsBody_1_.Choice_1_.Easy_2_.Device_1_.0',body1:'OpenCmsString.NewsBody_1_.Choice_1_.Easy_1_.BodyTextUpper_1_.0',body2:'OpenCmsString.NewsBody_1_.Choice_1_.Easy_2_.BodyTextUpper_1_.0',},json={};for(let name in items){if(inputs[items[name]].nodeName){if(inputs[items[name]].getAttribute('type')!=='checkbox'){json[name]={name:items[name],val:inputs[items[name]].value};}else{json[name]={name:items[name],val:inputs[items[name]].checked,checkbox:[0]};}}else{json[name]={name:items[name],val:true,checkbox:[]};for(let i=0;i<inputs[items[name]].length;i++){if(inputs[items[name]][i].checked){json[name].checkbox.push(i);}}}}console.table(json);var temp=document.createElement('textarea');temp.value=JSON.stringify(json);temp.selectionStart=0;temp.selectionEnd=temp.value.length;temp.style.position='fixed';temp.style.left='-100%';window.frames[0].frames[1].document.body.appendChild(temp);temp.focus();var result=window.frames[0].frames[1].document.execCommand('copy');temp.blur();window.frames[0].frames[1].document.body.removeChild(temp);var info=document.createElement('div');info.innerHTML='ニュースの更新コードをコピーしました。';info.style.position='fixed';info.style.top=0;info.style.width='100%';info.style.background='rgba(220,218,220,0.9)';info.style.fontSize='14px';info.style.padding='4px 10px';info.style.transition='0.1s linear';window.frames[0].frames[1].document.body.appendChild(info);setTimeout(function(){info.style.top='-40px';setTimeout(function(){window.frames[0].frames[1].document.body.removeChild(info);},400);},1000);})();"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span> ニュースコピー</a>
+    </div>
+    <div class="col-xs-6">
+      <a class="btn btn-default btn-lg btn-block bookmarklet" href="javascript:var form%3Dwindow.frames%5B0%5D.frames%5B1%5D.EDITOR%3Bif(!form.elements%5B'OpenCmsString.NewsBody_1_.Choice_1_.Easy_2_.BodyTextUpper_1_.0'%5D)%7Balert('本文入力エリアを2つ開いてから実行してください。')%3B%7Delse%7Bcode%3Dwindow.prompt('更新コードをツールからコピーしてください。')%3Bvar items%3DJSON.parse(code)%3Bconsole.table(items)%3Bfor(id in items)%7Bif(items%5Bid%5D%5B'checkbox'%5D)%7Bfor(_num of items%5Bid%5D%5B'checkbox'%5D)%7Bif(!form.elements%5Bitems%5Bid%5D%5B'name'%5D%5D%5B0%5D)%7Bform.elements%5Bitems%5Bid%5D%5B'name'%5D%5D.checked%3Ditems%5Bid%5D%5B'val'%5D%3B%7Delse%7Bform.elements%5Bitems%5Bid%5D%5B'name'%5D%5D%5B_num%5D.checked%3Ditems%5Bid%5D%5B'val'%5D%3B%7D%7D%7Delse%7Bform.elements%5Bitems%5Bid%5D%5B'name'%5D%5D.value%3Ditems%5Bid%5D%5B'val'%5D%3B%7D%7D%7Dvoid(0)%3Bvoid(0);"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> 更新コード入力</a>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="well">
+    <p><strong>ブックマークレットに登録</strong> : ボタンをドラッグし、ブックマークバーにドロップする</p>
+    <strong>ブックマークレットを使用</strong> : 対象のページに移動し、ブックマークを実行する
+  </div>
+</section>
+<hr>
+<div class="row">
+  <div class="text-center text-muted">
+    Copyright &copy; 2017 &middot; Released under the MIT license &middot; Kaoru Yoshinaga
+  </div>
+</div>
+<hr>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script type="text/javascript" src="settings.txt"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript">
+  var tool = new ConverterPage();
+  $(function(){
+    $('a.bookmarklet').click(function(){
+      return false;
+    })
+  });
+</script>
+</body>
+</html>
